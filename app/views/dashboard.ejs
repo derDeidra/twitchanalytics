@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="chatstats">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/angular-chart.min.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        var authToken = '<%=auth_token%>';
+        var displayName = '<%=display_name%>';
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/angular-chart.min.css">
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body ng-controller="chatstats-body">
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Twitch Analytics</h1>
+            <p>We do analytics and stuff</p>
+        </div>
+    </div>
+    <div class="panel panel-default descDiv">
+        <div class="panel-body">
+            <ul>
+                <li ng-repeat="element in feedback">{{element}}</li>
+            </ul>
+            <p>Your auth token is: <%=auth_token%></p>
+            <input type="text" ng-model="channelName"  ng-disabled="!ircActive"></input>
+            <button class="btn btn-default" ng-click="channelConnect()" ng-disabled="channelActive || !ircActive">Enter Channel</button>
+            <button class="btn btn-default" ng-click="channelDisconnect()" ng-disabled="!channelActive">Leave Channel</button>
+        </div>
+        </div>
+    </div>
+    <div class="panel panel-default descDiv">
+        <div class="panel-heading">
+            Twitch Model Parameters
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li ng-repeat="element in labels_pie">{{element}}</li>
+            </ul>
+            <input type="text" ng-model="modelParam"></input>
+            <button class="btn btn-default" ng-click="addModelParam()">Add Param</button>
+            <button class="btn btn-default" ng-click="resetParams()">Reset Params</button>
+            <button class="btn btn-default" ng-click="resetValues()">Reset Values</button>
+        </div>
+    </div>
+    <div class="panel panel-default descDiv">
+        <div class="panel-heading">
+            Meme Density Visualization
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-pie" chart-data="data_pie" chart-labels="labels_pie" chart-type="type" chart-legend="true"></canvas>
+        </div>
+    </div>
+
+</body>
+</html>

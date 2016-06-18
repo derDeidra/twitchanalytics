@@ -1,0 +1,23 @@
+#descDiv {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    background: #eee;
+}
+
+.descDiv {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    background: #eee;
+}
+
+
+#goButtonDiv {
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}

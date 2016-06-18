@@ -1,0 +1,16 @@
+{
+  "name": "TCAnalytics",
+  "version": "0.0.1",
+  "description": "A analytics platform for twitch chat",
+  "main": "server.js",
+  "dependencies": {
+    "ejs": "latest",
+    "express": "latest",
+    "express-session" : "latest",
+    "mongoose" : "latest",
+    "connect-mongo": "latest",
+    "socket.io" : "latest",
+    "irc" : "latest",
+    "twitch-api" : "latest"
+  }
+}
