@@ -21,7 +21,7 @@ app.controller("chatstats-body", function($scope, $http){
         $scope.$apply();
     }
 
-    var socket = io('http://localhost:1337');
+    var socket = io(window.location.host);
 
     socket.on(authToken + '-success-connect', function(){
         $scope.feedback.push('Twitch IRC Connection Successful');
