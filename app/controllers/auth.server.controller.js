@@ -1,10 +1,6 @@
+var config = require('config');
 var TwitchAPI = require('twitch-api');
-var twitch = new TwitchAPI({
-    clientId: 'pwsnvx4t4b3kz03u1t3359pjx81fz10',
-    clientSecret: 'ngkv8v2dhh42lp1ao44aamos7lcceye',
-    redirectUri: 'http://localhost:1337/auth_redirect',
-    scopes: ['user_read', 'channel_read', 'chat_login']
-});
+var twitch = new TwitchAPI(config.get("twitchapi"));
 
 exports.initialize = function(req, res) {
     var auth_url = twitch.getAuthorizationUrl();

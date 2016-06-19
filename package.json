@@ -11,6 +11,7 @@
     "connect-mongo": "latest",
     "socket.io" : "latest",
     "irc" : "latest",
-    "twitch-api" : "latest"
+    "twitch-api" : "latest",
+    "config" : "latest"
   }
 }
