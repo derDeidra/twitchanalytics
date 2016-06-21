@@ -27,7 +27,8 @@
     "bootstrap": "^3.3.6",
     "angular-chart.js": "^0.10.2",
     "Chart.js": "^2.1.6",
-    "socket.io": "^1.4.6"
+    "socket.io": "^1.4.6",
+    "angular-xeditable": "^0.1.12"
   },
   "resolutions": {
     "jquery": "1.9.1 - 2"
