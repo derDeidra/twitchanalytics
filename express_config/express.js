@@ -8,6 +8,9 @@ module.exports = function() {
     var MongoStore = require('connect-mongo')(session);
     var mongoose = require('mongoose');
 
+    var bodyParser = require('body-parser')
+    app.use( bodyParser.json() );   
+
     app.use(express.static('./public'));
 
     app.use(session({

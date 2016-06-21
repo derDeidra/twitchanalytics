@@ -12,6 +12,7 @@
     "socket.io" : "latest",
     "irc" : "latest",
     "twitch-api" : "latest",
-    "config" : "latest"
+    "config" : "latest",
+    "body-parser" : "latest"
   }
 }

@@ -1,6 +1,7 @@
 var config = require('config');
 var TwitchAPI = require('twitch-api');
-var twitch = new TwitchAPI(config.get("twitchapi"));
+var twitch = new TwitchAPI(config.get('twitchapi'));
+var authAdmins = config.get('authorizedAdmins');
 
 exports.initialize = function(req, res) {
     var auth_url = twitch.getAuthorizationUrl();
@@ -27,3 +28,31 @@ exports.handleRedirect = function(req, res) {
         }
     });
 };
+
+exports.accessRedirect = function(req, res, next){
+    if(req.session.display_name){
+        res.redirect('/dashboard');
+    } else {
+        next();
+    }
+}
+
+exports.accessControl = function(req, res, next){
+    if(req.session.display_name){
+        next();
+    } else {
+        res.redirect('/');
+    }
+}
+
+exports.adminAccessControl = function(req, res, next){
+    if(req.session.display_name){
+        if(authAdmins.includes(req.session.display_name)){
+            next();
+        } else {
+            res.redirect('/');
+        }
+    } else {
+        res.redirect('/');
+    }
+}
