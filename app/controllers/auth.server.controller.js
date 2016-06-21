@@ -22,7 +22,7 @@ exports.handleRedirect = function(req, res) {
                     console.log('Got channel information for user: ' + channel_data.display_name);
                     req.session.display_name = channel_data.display_name;
                     req.session.auth_token = body.access_token;
-                    res.redirect('/dashboard');
+                    res.redirect('/live');
                 }
             });
         }
@@ -35,7 +35,7 @@ exports.accessRedirect = function(req, res, next){
     } else {
         next();
     }
-}
+};
 
 exports.accessControl = function(req, res, next){
     if(req.session.display_name){
@@ -43,7 +43,7 @@ exports.accessControl = function(req, res, next){
     } else {
         res.redirect('/');
     }
-}
+};
 
 exports.adminAccessControl = function(req, res, next){
     if(req.session.display_name){
@@ -55,4 +55,4 @@ exports.adminAccessControl = function(req, res, next){
     } else {
         res.redirect('/');
     }
-}
+};

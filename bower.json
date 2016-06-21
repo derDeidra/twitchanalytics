@@ -1,0 +1,35 @@
+{
+  "name": "TCAnalytics",
+  "description": "A analytics platform for twitch chat",
+  "main": "server.js",
+  "authors": [
+    "Ezra Dowd <ezra.dowd@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "twitch"
+  ],
+  "homepage": "https://github.com/deApollo/twitchanalytics",
+  "moduleType": [
+    "node"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.7",
+    "jquery": "^3.0.0",
+    "bootstrap": "^3.3.6",
+    "angular-chart.js": "^0.10.2",
+    "Chart.js": "^2.1.6",
+    "socket.io": "^1.4.6"
+  },
+  "resolutions": {
+    "jquery": "1.9.1 - 2"
+  }
+}
