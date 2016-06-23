@@ -8,10 +8,11 @@ module.exports = function() {
     var MongoStore = require('connect-mongo')(session);
     var mongoose = require('mongoose');
 
-    var bodyParser = require('body-parser')
-    app.use( bodyParser.json() );   
+    var bodyParser = require('body-parser');
+    app.use( bodyParser.json() );
 
     app.use(express.static('./public'));
+    app.use('/bower_components', express.static('./bower_components'));
 
     app.use(session({
         secret: 'We so sneaky',

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="tasks">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+
+    <% include dependencies %>
+
+    <script src="js/tasks.js"></script>
+    <link rel="stylesheet" href="css/tasks.css">
+</head>
+<body ng-controller="tasks-body">
+    <% include navbar %>
+    <button class="btn btn-default" ng-click="addTask()">Add Task</button>
+    <div ng-repeat="task in tasks_global">
+        <div class="panel panel-default descDiv">
+            <div class="panel-heading">
+                <a href="#" editable-text="task.task_name">{{ task.task_name || 'Enter task name' }}</a>
+            </div>
+            <div class="panel-body">
+                <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
+                <p> Channels: </p>
+                <ul>
+                    <li ng-repeat="channel in task.channel_names">
+                        <a href="#" editable-text="channel.channel_name">{{ channel.channel_name || 'Enter channel name' }}</a>
+                    </li>
+                </ul>
+                <button class="btn btn-default" ng-click="addModel(task)">Add Model</button>
+                <p> Models: </p>
+                <div ng-repeat="model in task.models">
+                    <a href="#" editable-text="model.model_name">{{ model.model_name || 'Enter model name' }}</a>
+                    <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
+                    <p> Params: </p>
+                    <div ng-repeat="param in model.model_params">
+                        <ul>
+                            <li><a href="#" editable-text="param.key">{{ param.key || 'Enter param key' }}</a></li>
+                            <li><a href="#" editable-text="param.value">{{ param.value || 'Enter param value' }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

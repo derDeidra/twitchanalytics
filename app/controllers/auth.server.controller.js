@@ -15,12 +15,13 @@ exports.handleRedirect = function(req, res) {
             res.redirect('/');
         } else {
             console.log('Got access token ' + body.access_token);
-            twitch.getAuthenticatedUserChannel(body.access_token, function(err, channel_data){
+            twitch.getAuthenticatedUser(body.access_token, function(err, user_data){
                 if(err){
+                    console.log('Error: Unable to access authenticated user object for auth token ' + body.access_token);
                     res.redirect('/');
                 } else {
-                    console.log('Got channel information for user: ' + channel_data.display_name);
-                    req.session.display_name = channel_data.display_name;
+                    console.log('Got channel information for user: ' + user_data.display_name);
+                    req.session.display_name = user_data.display_name;
                     req.session.auth_token = body.access_token;
                     res.redirect('/live');
                 }
@@ -31,7 +32,7 @@ exports.handleRedirect = function(req, res) {
 
 exports.accessRedirect = function(req, res, next){
     if(req.session.display_name){
-        res.redirect('/dashboard');
+        res.redirect('/live');
     } else {
         next();
     }
@@ -47,7 +48,7 @@ exports.accessControl = function(req, res, next){
 
 exports.adminAccessControl = function(req, res, next){
     if(req.session.display_name){
-        if(authAdmins.includes(req.session.display_name)){
+        if(authAdmins.indexOf(req.session.display_name) >= 0){
             next();
         } else {
             res.redirect('/');
@@ -55,4 +56,9 @@ exports.adminAccessControl = function(req, res, next){
     } else {
         res.redirect('/');
     }
+};
+
+exports.logout = function(req, res){
+    req.session.destroy();
+    res.redirect('/');
 };

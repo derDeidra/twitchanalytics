@@ -203,6 +203,6 @@ exports.removeTask = function(req, res, next){
     next();
 };
 
-exports.getAllTasks = function(){
-    return tasks_global;
+exports.getAllTasks = function(req, res){
+    res.json(tasks_global);
 };

@@ -3,16 +3,18 @@ var backgroundID;
 module.exports = function(app) {
 
     var landing = require('../controllers/landing.server.controller');
-    var livestats = require('../controllers/livestats.server.controller');
+    var live = require('../controllers/live.server.controller');
     var auth = require('../controllers/auth.server.controller');
-    var taskcontrol = require('../controllers/taskcontrol.server.controller.js');
+    var tasks = require('../controllers/tasks.server.controller.js');
     var background = require('../background');
     background.init();
     backgroundID = setInterval(background.save, 300000);
 
     app.get('/', auth.accessRedirect, landing.render);
-    app.get('/livestats', auth.accessControl, livestats.render);
-    app.get('/tasksummary', auth.adminAccessControl, taskcontrol.render);
+    app.get('/live', auth.accessControl, live.render);
+    app.get('/tasks', auth.adminAccessControl, tasks.render);
     app.get('/auth', auth.initialize);
     app.get('/auth_redirect', auth.handleRedirect);
+    app.get('/gettasks', auth.adminAccessControl, background.getAllTasks);
+    app.get('/logout', auth.accessControl, auth.logout);
 };

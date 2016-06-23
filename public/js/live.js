@@ -1,7 +1,7 @@
 
-var app = angular.module('livestats', ['chart.js']);
+var app = angular.module('live', ['chart.js']);
 
-app.controller('livestats-body', function($scope){
+app.controller('live-body', function($scope){
     $scope.currentChannel;
     $scope.feedback = [];
 
