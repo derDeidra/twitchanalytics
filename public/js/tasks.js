@@ -22,17 +22,17 @@ app.controller('tasks-body', function($scope, $http) {
     $scope.tasks_global = [];
 
     function isValidTask(task){
-        if(task.task_name.length <= 0)
+        if(task.name.length <= 0)
             return false;
-        if(task.channel_names.length <= 0)
+        if(task.channels.length <= 0)
             return false;
         for(var i = 0; i < task.models.length; i++){
             var model = task.models[i];
-            if(model.model_name.length <= 0)
+            if(model.name.length <= 0)
                 return false;
-            for(var j = 0; j < model.model_params.length; j++){
-                var param = model.model_params[j];
-                if(param.key.length <= 0)
+            for(var j = 0; j < model.params.length; j++){
+                var param = model.params[j];
+                if(param.param.length <= 0)
                     return false;
             }
         }
@@ -74,6 +74,14 @@ app.controller('tasks-body', function($scope, $http) {
         $http(req).then(httpSuccessHandler, httpFailureHandler);
     }
 
+    function dataExistsFor(param, data){
+        for(var i = 0; i < data.length; i++){
+            if(data[i].param == param)
+                return true;
+        }
+        return false;
+    }
+
     $scope.getTasks = function() {
         $http({
             method: 'GET',
@@ -93,7 +101,33 @@ app.controller('tasks-body', function($scope, $http) {
             var task = $scope.tasks_global[i];
             if(task.modified){
                 if(isValidTask(task)){
-                    if(task.id){
+                    for(var j = 0; j < task.models.length; j++){
+                        var model = task.models[j];
+                        if(model.data.length <= 0){
+                            for(var k = 0; k < task.channels.length; k++){
+                                for(var l = 0; l < model.params.length; l++){
+                                    model.data.push({
+                                        channel : task.channels[k].channel,
+                                        param : model.params[l].param,
+                                        value : 0
+                                    });
+                                }
+                            }
+                        } else if(model.data.length != model.params.length){
+                            for(var k = 0; k < model.params.length; k++){
+                                var param = model.params[k].param;
+                                if(!dataExistsFor(param,model.data)){
+                                    for(var l = 0; l < task.channels.length; l++)
+                                    model.data.push({
+                                        channel : task.channels[l].channel,
+                                        param : param,
+                                        value : 0
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    if(task._id){
                         toUpdate.push(task);
                     } else {
                         toSave.push(task);
@@ -114,32 +148,36 @@ app.controller('tasks-body', function($scope, $http) {
 
     $scope.addTask = function() {
         $scope.tasks_global.push({
-            task_name: '',
-            channel_names: [],
+            name: '',
+            channels: [],
             models: []
         });
     };
 
     $scope.addChannel = function(task) {
-        task.channel_names.push({channel_name : ''});
+        task.channels.push({channel : ''});
     };
 
     $scope.addModel = function(task) {
         task.models.push({
-            model_name: '',
-            model_params: []
+            name: '',
+            params: [],
+            data : []
         });
     };
 
     $scope.addParam = function(model) {
-        model.model_params.push({
-            key: '',
-            value: 0
+        model.params.push({
+            param: ''
         });
     };
 
     $scope.markChanged = function(task){
         task.modified = true;
+    };
+
+    $scope.removeTask = function(task){
+        console.log(task);
     }
 
     $scope.getTasks();

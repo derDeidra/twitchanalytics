@@ -9,21 +9,39 @@ var UserSchema = new mongoose.Schema({
 
 var User = mongoose.model('User', UserSchema);
 
-var ParamSchema = new mongoose.Schema({
-    key: String,
+var ParamDataSchema = new mongoose.Schema({
+    param: String,
+    channel: String,
     value: Number
 });
 
-var Param = mongoose.model('Param', ParamSchema);
+var ParamData = mongoose.model('ParamData', ParamDataSchema);
 
 var ModelSchema = new mongoose.Schema({
-    model_name : String,
-    params : [mongoose.Schema.Types.ObjectId]
+    name : String,
+    params : {
+        type: [String],
+        get: function(data) {
+            var arrBuilder = [];
+            for(var i = 0; i < data.length; i++){
+                arrBuilder.push({param : data[i]});
+            }
+            return arrBuilder;
+        },
+        set: function(data) {
+            var arrBuilder = [];
+            for(var i = 0; i < data.length; i++){
+                arrBuilder.push(data[i].param);
+            }
+            return arrBuilder;
+        }
+    },
+    data : [mongoose.Schema.Types.ObjectId]
 });
 
 ModelSchema.pre("remove", function(next){
-    for(var i = 0; i < this.params.length; i++){
-        Param.remove({_id : this.params[i]}).exec();
+    for(var i = 0; i < this.data.length; i++){
+        ParamData.remove({_id : this.data[i]}).exec();
     }
     next();
 });
@@ -31,18 +49,22 @@ ModelSchema.pre("remove", function(next){
 var Model = mongoose.model('Model', ModelSchema);
 
 var TaskSchema = new mongoose.Schema({
-    task_name : String,
-    channel_names : {
-        type: String,
+    name : String,
+    channels : {
+        type: [String],
         get: function(data) {
-            try {
-                return JSON.parse(data);
-            } catch(e) {
-                return data;
+            var arrBuilder = [];
+            for(var i = 0; i < data.length; i++){
+                arrBuilder.push({channel : data[i]});
             }
+            return arrBuilder;
         },
         set: function(data) {
-            return JSON.stringify(data);
+            var arrBuilder = [];
+            for(var i = 0; i < data.length; i++){
+                arrBuilder.push(data[i].channel);
+            }
+            return arrBuilder;
         }
     },
     models : [mongoose.Schema.Types.ObjectId]
@@ -60,6 +82,6 @@ var Task = mongoose.model('Task', TaskSchema);
 module.exports = {
     User : User,
     Task : Task,
-    Param : Param,
+    ParamData : ParamData,
     Model : Model
 };

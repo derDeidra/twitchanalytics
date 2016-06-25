@@ -17,8 +17,8 @@
     <div class="descDiv">
         <div ng-repeat="task in tasks_global" class="panel panel-default">
             <div class="panel-heading">
-                <a href="#" editable-text="task.task_name" onbeforesave="markChanged(task)">
-                    {{ task.task_name || 'Click to enter task name' }}
+                <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
+                    {{ task.name || 'Click to enter task name' }}
                 </a>
             </div>
             <div class="panel-body">
@@ -28,8 +28,8 @@
                     </div>
                     <div class="panel-body">
                         <ul class="list-group">
-                            <li ng-repeat="channel in task.channel_names" class="list-group-item" editable-text="channel.channel_name" onbeforesave="markChanged(task)">
-                                {{ channel.channel_name || 'Click to enter channel name' }}
+                            <li ng-repeat="channel in task.channels" class="list-group-item" editable-text="channel.channel" onbeforesave="markChanged(task)">
+                                {{ channel.channel || 'Click to enter channel name' }}
                             </li>
                         </ul>
                         <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
@@ -42,14 +42,14 @@
                     <div class="panel-body">
                         <div class="panel panel-default" ng-repeat="model in task.models">
                             <div class="panel-heading">
-                                <a href="#" editable-text="model.model_name" onbeforesave="markChanged(task)">
-                                    {{ model.model_name || 'Click to enter model name' }}
+                                <a href="#" editable-text="model.name" onbeforesave="markChanged(task)">
+                                    {{ model.name || 'Click to enter model name' }}
                                 </a>
                             </div>
                             <div class="panel-body">
                                 <ul class="list-group">
-                                    <li ng-repeat="param in model.model_params" class="list-group-item" editable-text="param.key" onbeforesave="markChanged(task)">
-                                        {{ param.key || 'Click to enter parameter' }} - {{param.value}}
+                                    <li ng-repeat="param in model.params" class="list-group-item" editable-text="param.param" onbeforesave="markChanged(task)">
+                                        {{ param.param || 'Click to enter parameter' }}
                                     </li>
                                 </ul>
                                 <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-default" ng-click="removeTask">Delete Task</button>
+            <button class="btn btn-default" ng-click="removeTask(task)">Delete Task</button>
         </div>
         <div class="buttonDiv">
             <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
