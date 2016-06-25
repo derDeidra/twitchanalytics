@@ -47,3 +47,8 @@ exports.leaveIrcChannel = function(auth_token, channel_name, success){
 exports.addIrcListener = function(auth_token, key, callback){
     clients[auth_token].addListener(key,callback);
 };
+
+exports.removeIrcListener = function(auth_token, key, callback){
+    clients[auth_token].removeListener(key,callback);
+};
+

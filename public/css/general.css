@@ -1,0 +1,62 @@
+body {
+    background: #444444;
+}
+
+.panel > .panel-heading {
+    background-color: #1E1A19;
+    border-color: #5b5a5c;
+    color: white;
+}
+
+.panel {
+    background-color: #444444;
+    border-color: #1E1A19;
+}
+
+.list-group-item {
+    background-color: #1E1A19;
+    border-color: #5b5a5c;
+}
+
+.editable-click, a.editable-click {
+    text-decoration: none;
+    color: white;
+    border-bottom: none;
+}
+
+.btn-default {
+    background-color: #7D5BBE;
+    border-color: #7D5BBE;
+    color: white;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open>.dropdown-toggle.btn-default {
+    background-color: #a55de8;
+    border-color: #a55de8;
+    color: white;
+}
+
+.descDiv {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    border-radius: 5px;
+    background: #1E1A19;
+}
+
+.buttonDiv {
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+.buttonDiv button {
+    width: 40%;
+}
+
+#goButtonDiv {
+    width: 20%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}

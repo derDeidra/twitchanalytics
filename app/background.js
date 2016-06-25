@@ -7,6 +7,8 @@ var appDisplayName = config.get('app.display_name');
 var tasks_global = [];
 var paramCreationsPending = 0;
 var modelCreationsPending = 0;
+var listenerLock = {};
+var channelTaskMapping = {};
 
 /*
     {
@@ -32,22 +34,52 @@ function handleIrcSuccess(area, auth_token){
     console.log('[Background Tasks] ' + auth_token + '-success-' + area);
 }
 
-function parseMessage(from, text, task){
-    for(var i = 0; i < task.models; i++){
-        for(var j = 0; j < task.models[i].params.length; j++){
-            var reg = new RegExp('.*' + task.models[i].params[j].key + '.*', 'g');
-            var count = (text.match(reg) || []).length;
-            task.models[i].params[j].value += count;
+function parseMessage(from, text, channel){
+    for(var z = 0; z < channelTaskMapping[channel].length; z++) {
+        var task = tasks_global[getGlobalIndex(channelTaskMapping[channel][z])]
+        for (var i = 0; i < task.models; i++) {
+            for (var j = 0; j < task.models[i].params.length; j++) {
+                var reg = new RegExp('.*' + task.models[i].params[j].key + '.*', 'g');
+                var count = (text.match(reg) || []).length;
+                task.models[i].params[j].value += count;
+            }
         }
     }
 }
 
 function startTask (task) {
     for(var i = 0; i < task.channel_names.length; i++){
-        irc.joinIrcChannel(appAuthToken, task.channel_names[i], handleIrcSuccess);
-        irc.addIrcListener(appAuthToken, 'message#' + task.channel_names[i], function(from, text){
-            parseMessage(from, text, task);
-        });
+        if(listenerLock[task.channel_names[i]]){
+            listenerLock[task.channel_names[i]]++;
+            channelTaskMapping[task.channel_names[i]].push(task.task_name);
+        } else {
+            irc.joinIrcChannel(appAuthToken, task.channel_names[i], handleIrcSuccess);
+            irc.addIrcListener(appAuthToken, 'message#' + task.channel_names[i], function(from, text){
+                parseMessage(from, text, task.channel_names[i]);
+            });
+            listenerLock[task.channel_names[i]] = 1;
+            channelTaskMapping[task.channel_names[i]] = [task.task_name];
+
+        }
+    }
+}
+
+function endTask (task){
+    for(var i = 0; i < task.channel_names.length; i++){
+        listenerLock[task.channel_names[i]]--;
+        if(listenerLock[task.channel_names[i]] == 0){
+            irc.removeIrcListener(appAuthToken, 'message#' + task.channel_names[i], function(from, text){
+                parseMessage(from, text, task);
+            });
+            irc.leaveIrcChannel(auth_token, task.channel_names[i], handleIrcSuccess);
+        }
+        for(var i = 0; i < channelTaskMapping.length; i++){
+            for (var j=channelTaskMapping[i].length-1; j>=0; j--) {
+                if (channelTaskMapping[i][j] === task.task_name) {
+                    channelTaskMapping[i].splice(j, 1);
+                }
+            }
+        }
     }
 }
 
@@ -186,21 +218,50 @@ exports.save = function(){
     saveParams();
 };
 
-exports.addTask = function(req, res, next){
-    var newTask = req.body.task;
-    tasks_global.push(newTask);
-    startTask(tasks_global[tasks_global.length-1]);
-    next();
+exports.updateTasks = function(req, res){
+    var tasksToUpdate = req.body.tasks;
+    var rejectedTasks = [];
+    for(var i = 0; i < tasksToUpdate.length; i++){
+        var index = getGlobalIndex(tasksToUpdate[i].task_name)
+        if(index != -1){
+            endTask(tasks_global[index])
+            tasks_global[index] = tasksToUpdate[i];
+            startTask(tasks_global[index])
+        } else {
+            rejectedTasks.push(tasksToUpdate.task_name);
+        }
+    }
+    res.json({success : 1, rejected : rejectedTasks})
+}
+
+exports.addTasks = function(req, res){
+    var newTasks = req.body.tasks;
+    var rejectedTasks = []
+    for(var i = 0; i < newTasks.length; i++){
+        var index = getGlobalIndex(newTasks[i].task_name);
+        if(index == -1) {
+            rejectedTasks.push(newTasks.splice(index, 1));
+            i--;
+        }
+    }
+    tasks_global = tasks_global.concat(newTasks);
+    for(var i = 0; i < newTasks.length; i++){
+        startTask(tasks_global[tasks_global.length-i]);
+    }
+    res.json({success : 1, rejected : rejectedTasks});
 };
 
-exports.removeTask = function(req, res, next){
-    var taskname = req.body.task;
-    var index = getGlobalIndex(taskname);
-    if(index != -1){
-        var removedTask = tasks_global.splice(index,1);
-        schema.Task.remove({_id : removedTask[0].id}).exec();
+exports.removeTasks = function(req, res){
+    var taskNames = req.body.taskNames;
+    for(var i = 0; i < taskNames.length; i++){
+        var index = getGlobalIndex(taskName);
+        if(index != -1){
+            var removedTask = tasks_global.splice(index,1);
+            schema.Task.remove({_id : removedTask[0].id}).exec();
+            i--;
+        }
     }
-    next();
+    res.json({success : 1});
 };
 
 exports.getAllTasks = function(req, res){

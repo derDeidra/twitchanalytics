@@ -10,40 +10,55 @@
     <% include dependencies %>
 
     <script src="js/tasks.js"></script>
-    <link rel="stylesheet" href="css/tasks.css">
+    <link rel="stylesheet" href="css/general.css">
 </head>
 <body ng-controller="tasks-body">
     <% include navbar %>
-    <button class="btn btn-default" ng-click="addTask()">Add Task</button>
-    <div ng-repeat="task in tasks_global">
-        <div class="panel panel-default descDiv">
+    <div class="descDiv">
+        <div ng-repeat="task in tasks_global" class="panel panel-default">
             <div class="panel-heading">
-                <a href="#" editable-text="task.task_name">{{ task.task_name || 'Enter task name' }}</a>
+                <a href="#" editable-text="task.task_name">{{ task.task_name || 'Click to enter task name' }}</a>
             </div>
             <div class="panel-body">
-                <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
-                <p> Channels: </p>
-                <ul>
-                    <li ng-repeat="channel in task.channel_names">
-                        <a href="#" editable-text="channel.channel_name">{{ channel.channel_name || 'Enter channel name' }}</a>
-                    </li>
-                </ul>
-                <button class="btn btn-default" ng-click="addModel(task)">Add Model</button>
-                <p> Models: </p>
-                <div ng-repeat="model in task.models">
-                    <a href="#" editable-text="model.model_name">{{ model.model_name || 'Enter model name' }}</a>
-                    <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
-                    <p> Params: </p>
-                    <div ng-repeat="param in model.model_params">
-                        <ul>
-                            <li><a href="#" editable-text="param.key">{{ param.key || 'Enter param key' }}</a></li>
-                            <li><a href="#" editable-text="param.value">{{ param.value || 'Enter param value' }}</a></li>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>Channels</h5>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li ng-repeat="channel in task.channel_names" class="list-group-item" editable-text="channel.channel_name">
+                                {{ channel.channel_name || 'Click to enter channel name' }}
+                            </li>
                         </ul>
+                        <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>Models</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="panel panel-default" ng-repeat="model in task.models">
+                            <div class="panel-heading">
+                                <a href="#" editable-text="model.model_name">{{ model.model_name || 'Click to enter model name' }}</a>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li ng-repeat="param in model.model_params" class="list-group-item" editable-text="param.key">
+                                        {{ param.key || 'Click to enter parameter' }}
+                                    </li>
+                                </ul>
+                                <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-default" ng-click="addModel(task)">Add Model</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        <div class="buttonDiv">
+            <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
+        </div>
     </div>
 </body>
 </html>

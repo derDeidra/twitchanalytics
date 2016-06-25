@@ -24,12 +24,16 @@ app.controller('tasks-body', function($scope, $http) {
     $scope.getTasks = function() {
         $http({
             method: 'GET',
-            url: '/gettasks'
+            url: '/getTasks'
         }).then(function successCallback(response) {
             console.log(response);
         }, function errorCallback(response) {
             console.log(response);
         });
+    };
+
+    $scope.saveTasks = function(){
+        
     };
 
     $scope.addTask = function() {
