@@ -15,7 +15,7 @@
     </script>
 
     <script src="js/live.js"></script>
-    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/general.css">
 </head>
 <body ng-controller="live-body">
     <% include navbar %>
@@ -25,7 +25,7 @@
                 <li ng-repeat="element in feedback">{{element}}</li>
             </ul>
             <p>Your auth token is: <%=auth_token%></p>
-            <input type="text" ng-model="channelName"  ng-disabled="!ircActive"></input>
+            <input type="text" ng-model="channelName"  ng-disabled="!ircActive"/>
             <button class="btn btn-default" ng-click="channelConnect()" ng-disabled="channelActive || !ircActive">Enter Channel</button>
             <button class="btn btn-default" ng-click="channelDisconnect()" ng-disabled="!channelActive">Leave Channel</button>
         </div>
@@ -39,7 +39,7 @@
             <ul>
                 <li ng-repeat="element in labels_pie">{{element}}</li>
             </ul>
-            <input type="text" ng-model="modelParam"></input>
+            <input type="text" ng-model="modelParam"/>
             <button class="btn btn-default" ng-click="addModelParam()">Add Param</button>
             <button class="btn btn-default" ng-click="resetParams()">Reset Params</button>
             <button class="btn btn-default" ng-click="resetValues()">Reset Values</button>

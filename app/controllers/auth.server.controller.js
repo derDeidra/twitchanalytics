@@ -14,13 +14,13 @@ exports.handleRedirect = function(req, res) {
             console.log(err);
             res.redirect('/');
         } else {
-            console.log('Got access token ' + body.access_token);
+            console.log('[AUTH] Got access token ' + body.access_token);
             twitch.getAuthenticatedUser(body.access_token, function(err, user_data){
                 if(err){
-                    console.log('Error: Unable to access authenticated user object for auth token ' + body.access_token);
+                    console.log('[AUTH] Error: Unable to access authenticated user object for auth token ' + body.access_token);
                     res.redirect('/');
                 } else {
-                    console.log('Got channel information for user: ' + user_data.display_name);
+                    console.log('[AUTH] Got channel information for user: ' + user_data.display_name);
                     req.session.display_name = user_data.display_name;
                     req.session.auth_token = body.access_token;
                     res.redirect('/live');

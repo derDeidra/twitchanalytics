@@ -32,7 +32,19 @@ var Model = mongoose.model('Model', ModelSchema);
 
 var TaskSchema = new mongoose.Schema({
     task_name : String,
-    channel_names : [String],
+    channel_names : {
+        type: String,
+        get: function(data) {
+            try {
+                return JSON.parse(data);
+            } catch(e) {
+                return data;
+            }
+        },
+        set: function(data) {
+            return JSON.stringify(data);
+        }
+    },
     models : [mongoose.Schema.Types.ObjectId]
 });
 

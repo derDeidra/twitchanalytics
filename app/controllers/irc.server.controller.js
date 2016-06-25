@@ -13,6 +13,8 @@ exports.createIrcClient = function(auth_token, username){
     var client = new irc.Client(config.server, config.nick, config);
 
     clients[auth_token] = client;
+
+    console.log('[IRC] Successfully created IRC client');
 };
 
 exports.destroyIrcClient = function(auth_token){
@@ -21,7 +23,7 @@ exports.destroyIrcClient = function(auth_token){
 
 exports.connectIrcClient = function(auth_token, success){
     clients[auth_token].connect(2,function(){
-        console.log('Successfully created IRC connection');
+        console.log('[IRC] Successfully created IRC connection');
         success('connect', auth_token);
     });
 };
@@ -34,7 +36,7 @@ exports.disconnectIrcClient = function(auth_token, success){
 
 exports.joinIrcChannel = function(auth_token, channel_name, success){
     clients[auth_token].join('#' + channel_name, function(){
-        success('join', auth_token);
+        success('join', auth_token, channel_name);
     });
 };
 
