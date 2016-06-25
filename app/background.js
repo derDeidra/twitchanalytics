@@ -152,8 +152,8 @@ function saveModels(){
         for(var j = 0; j < tasks_global[i].models.length; j++){
             var curModel = tasks_global[i].models[j];
             modelOperationsPending += 1;
-            if(curModel.id){
-                schema.Model.update({_id : curModel.id}, {name : curModel.name, params : curModel.params, data : constructIdList(curModel.data)}, function(err){
+            if(curModel._id){
+                schema.Model.update({_id : curModel._id}, {name : curModel.name, params : curModel.params, data : constructIdList(curModel.data)}, function(err){
                     if(err){
                         console.log('Error: There was an issue updating a model');
                     }
@@ -186,8 +186,8 @@ function saveTasks(){
         var curTask = tasks_global[i];
         taskOperationsPending += 1;
 
-        if(curTask.id){
-            schema.Task.update({_id : curTask.id}, {name : curTask.name, channels : curTask.channels, models : constructIdList(curTask.models)}, function(err){
+        if(curTask._id){
+            schema.Task.update({_id : curTask._id}, {name : curTask.name, channels : curTask.channels, models : constructIdList(curTask.models)}, function(err){
                 if(err){
                     console.log('Error: There was an issue updating a task');
                 }

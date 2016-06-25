@@ -28,7 +28,8 @@ function leaveChannel(data){
 function listen(data){
     console.log('[SOCKETS] Listening on channel ' + data.channel + ' for ' + data.auth_token);
     irc.addIrcListener(data.auth_token, 'message#' + data.channel, function(from, text, message){
-        sockets[data.auth_token].emit(data.auth_token + '-' + data.channel + '-message', {from : from, text: text, message: message});
+        if(sockets[data.auth_token])
+            sockets[data.auth_token].emit(data.auth_token + '-' + data.channel + '-message', {from : from, text: text, message: message});
     });
 }
 

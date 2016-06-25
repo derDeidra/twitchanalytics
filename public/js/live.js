@@ -61,6 +61,7 @@ app.controller('live-body', function($scope){
 
     $scope.addModelParam = function(){
         $scope.labels_pie.push($scope.modelParam);
+        $scope.modelParam = '';
         $scope.data_pie.push(0);
     };
 
