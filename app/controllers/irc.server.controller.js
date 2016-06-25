@@ -51,6 +51,6 @@ exports.addIrcListener = function(auth_token, key, callback){
 };
 
 exports.removeIrcListener = function(auth_token, key, callback){
-    clients[auth_token].removeListener(key,callback);
+    clients[auth_token].removeListener(key, clients[auth_token]._events[key]);
 };
 
