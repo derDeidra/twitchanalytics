@@ -10,6 +10,8 @@ var modelOperationsPending = 0;
 var taskOperationsPending = 0;
 var listenerLock = {};
 var channelTaskMapping = {};
+var rawBuffer = [];
+var rawBufferMax = 1000;
 
 /*
     {
@@ -37,6 +39,14 @@ function handleIrcSuccess(area, auth_token, details){
 }
 
 function parseMessage(from, text, channel){
+    rawBuffer.push({from : from, text: text, channel : channel});
+    if(rawBuffer.length > rawBufferMax){
+        for(var i = 0; i < rawBuffer.length; i++){
+            var curRaw = rawBuffer[i];
+            schema.Raw.create({from : curRaw.from, text: curRaw.text, channel : curRaw.channel});
+        }
+        rawBuffer = [];
+    }
     for(var i = 0; i < channelTaskMapping[channel].length; i++) {
         var task = tasks_global[getGlobalIndex(channelTaskMapping[channel][i])]
         for (var j = 0; j < task.models.length; j++) {
@@ -137,7 +147,7 @@ function saveParamData(){
                             }
                             paramOperationsPending -= 1;
                             if(paramOperationsPending == 0){
-                                saveModels()
+                                saveModels();
                             }
                         });
                     }
@@ -198,11 +208,22 @@ function saveTasks(){
             });
         } else {
             with({task : curTask}){
-                schema.Task.create({name : curTask.name, channels : curTask.channels, models : constructIdList(curTask.models)}, function(err, obj){
+                schema.Task.create({owner : curTask.owner, name : curTask.name, channels : curTask.channels, models : constructIdList(curTask.models)}, function(err, obj){
                     if(err){
                         console.log('Error: There was an issue creating a task');
                     } else {
                         task._id = obj._id;
+                        with({task_id : obj._id}){
+                            User.find({username : task.owner}, function(err, userObj){
+                                userObj.tasks.push(task_id);
+                                userObj.save(function(err){
+                                    if(err){
+                                        console.log("[BACKGROUND] Error updating user object");
+                                    }
+                                })
+                            });
+                        }
+
                         taskOperationsPending -= 1;
                         if(taskOperationsPending == 0){
                             console.log("[BACKGROUND] Saving complete");
@@ -214,12 +235,20 @@ function saveTasks(){
     }
 }
 
-function getGlobalIndex(taskname){
+function getGlobalIndex(name){
     for(var i = 0; i < tasks_global.length; i++){
-        if (tasks_global[i].name == taskname)
+        if (tasks_global[i].name == name)
             return i;
     }
     return -1;
+}
+
+function getTaskById(id){
+    for(var i = 0; i < tasks_global.length; i++){
+        if(tasks_global[i]._id == id)
+            return tasks_global[i];
+    }
+    return null;
 }
 
 function initHelper(){
@@ -233,7 +262,7 @@ function initHelper(){
                 } else {
                     for(var i = 0; i < tasks.length; i++){
                         console.log('[BACKGROUND] Kicking off task ' + tasks[i].task_name);
-                        tasks_global.push({_id : tasks[i]._id, name : tasks[i].name, channels : tasks[i].channels, models : parseOutModels(tasks[i].models)});
+                        tasks_global.push({_id : tasks[i]._id, owner : tasks[i].owner, name : tasks[i].name, channels : tasks[i].channels, models : parseOutModels(tasks[i].models)});
                         startTask(tasks_global[i]);
                     }
                 }
@@ -258,9 +287,11 @@ exports.updateTasks = function(req, res){
     for(var i = 0; i < tasksToUpdate.length; i++){
         var index = getGlobalIndex(tasksToUpdate[i].task_name)
         if(index != -1){
-            endTask(tasks_global[index])
-            tasks_global[index] = tasksToUpdate[i];
-            startTask(tasks_global[index])
+            if(tasks_global[index].owner == req.session.display_name){
+                endTask(tasks_global[index]);
+                tasks_global[index] = tasksToUpdate[i];
+                startTask(tasks_global[index]);
+            }
         } else {
             rejectedTasks.push(tasksToUpdate.task_name);
         }
@@ -278,6 +309,8 @@ exports.addTasks = function(req, res){
         if(index != -1) {
             rejectedTasks.push(newTasks.splice(index, 1));
             i--;
+        } else {
+            newTasks[i].owner = req.session.display_name;
         }
     }
     tasks_global = tasks_global.concat(newTasks);
@@ -291,19 +324,38 @@ exports.addTasks = function(req, res){
 exports.removeTasks = function(req, res){
     var taskNames = req.body.taskNames;
     console.log("[BACKGROUND] Got request to remove " + taskNames.length + " tasks");
+    var tasksRemoved = 0;
     for(var i = 0; i < taskNames.length; i++){
         var index = getGlobalIndex(taskName);
         if(index != -1){
-            var removedTask = tasks_global.splice(index,1);
-            schema.Task.remove({_id : removedTask[0].id}).exec();
-            i--;
+            if(tasks_global[index].owner == req.session.display_name){
+                var removedTask = tasks_global.splice(index,1);
+                schema.Task.remove({_id : removedTask[0].id}).exec();
+                tasksRemoved++;
+                i--;
+            }
         }
     }
     saveParamData();
-    res.json({success : 1});
+    res.json({removed : tasksRemoved});
+};
+
+exports.getAllUserTasks = function(req, res){
+    console.log("[BACKGROUND] Got request for all tasks listing from user " + req.sesson.display_name);
+    schema.User.findOne({username : req.session.display_name}).populate({path : "tasks", model : "Task"}).exec(function(err, user){
+        if(err){
+            console.log("[BACKGROUND] Error resolving user object for user " + req.session.display_name);
+            res.json({});
+        } else {
+            var tasks = [];
+            for(var i = 0; i < user.tasks.length; i++){
+                tasks.push(getTaskById(user.tasks[i]._id));
+            }
+            res.json(tasks);
+        }
+    });
 };
 
 exports.getAllTasks = function(req, res){
-    console.log("[BACKGROUND] Got request for all tasks listing");
     res.json(tasks_global);
-};
+}

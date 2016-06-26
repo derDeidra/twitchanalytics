@@ -11,6 +11,9 @@ module.exports = function() {
     var bodyParser = require('body-parser');
     app.use( bodyParser.json() );
 
+    var favicon = require('serve-favicon');
+    app.use(favicon('./public/favicon.ico'));
+
     app.use(express.static('./public'));
     app.use('/bower_components', express.static('./bower_components'));
 

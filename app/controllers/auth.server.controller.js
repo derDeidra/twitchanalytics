@@ -2,6 +2,7 @@ var config = require('config');
 var TwitchAPI = require('twitch-api');
 var twitch = new TwitchAPI(config.get('twitchapi'));
 var authAdmins = config.get('authorizedAdmins');
+var User = require('../schema').User
 
 exports.initialize = function(req, res) {
     var auth_url = twitch.getAuthorizationUrl();
@@ -23,6 +24,17 @@ exports.handleRedirect = function(req, res) {
                     console.log('[AUTH] Got channel information for user: ' + user_data.display_name);
                     req.session.display_name = user_data.display_name;
                     req.session.auth_token = body.access_token;
+                    User.findOne({username : user_data.display_name}, function(err, user){
+                        if(err){
+                            console.log("[AUTH] Error getting user object for " + user_data.display_name);
+                        } else {
+                            if(user != null){
+                                User.update({_id : user._id}, {auth : body.access_token});
+                            } else {
+                                User.create({username : user_data.display_name, auth : body.access_token, tasks : []});
+                            }
+                        }
+                    });
                     res.redirect('/live');
                 }
             });

@@ -1,9 +1,18 @@
 var mongoose = require('mongoose');
 
+var RawSchema = new mongoose.Schema({
+    from : String,
+    text : String,
+    channel : String
+});
+
+var Raw = mongoose.model('Raw', RawSchema);
+
 //Define the mongoose user schema
 var UserSchema = new mongoose.Schema({
     username : String,
-    oauth : String
+    oauth : String,
+    tasks : [mongoose.Schema.Types.ObjectId]
 });
 
 
@@ -49,6 +58,7 @@ ModelSchema.pre("remove", function(next){
 var Model = mongoose.model('Model', ModelSchema);
 
 var TaskSchema = new mongoose.Schema({
+    owner : String,
     name : String,
     channels : {
         type: [String],
@@ -83,5 +93,6 @@ module.exports = {
     User : User,
     Task : Task,
     ParamData : ParamData,
-    Model : Model
+    Model : Model,
+    Raw : Raw
 };

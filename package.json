@@ -13,6 +13,7 @@
     "irc" : "latest",
     "twitch-api" : "latest",
     "config" : "latest",
-    "body-parser" : "latest"
+    "body-parser" : "latest",
+    "serve-favicon" : "latest"
   }
 }

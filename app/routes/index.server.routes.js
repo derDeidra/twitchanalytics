@@ -11,15 +11,22 @@ module.exports = function(app) {
     console.log("[ROUTES] Starting save loop");
     backgroundID = setInterval(background.save, 300000);
 
+    //Pages
     app.get('/', auth.accessRedirect, landing.render);
     app.get('/live', auth.accessControl, live.render);
     app.get('/tasks', auth.adminAccessControl, tasks.render);
+
+    //Auth
     app.get('/auth', auth.initialize);
     app.get('/auth_redirect', auth.handleRedirect);
-    app.get('/getTasks', auth.adminAccessControl, background.getAllTasks);
     app.get('/logout', auth.accessControl, auth.logout);
 
-    app.post('/addTasks', auth.adminAccessControl, background.addTasks);
-    app.post('/updateTasks', auth.adminAccessControl, background.updateTasks);
-    app.post('/removeTasks', auth.adminAccessControl, background.removeTasks);
+    //App GET endpoints
+    app.get('/getTasks', auth.accessControl, background.getAllUserTasks);
+    app.get('/getAllTasks', auth.adminAccessControl, background.getAllTasks);
+
+    //App POST endpoints
+    app.post('/addTasks', auth.accessControl, background.addTasks);
+    app.post('/updateTasks', auth.accessControl, background.updateTasks);
+    app.post('/removeTasks', auth.accessControl, background.removeTasks);
 };

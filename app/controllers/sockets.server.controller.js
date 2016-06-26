@@ -50,7 +50,7 @@ function setupSocket(socket){
     socket.on('part-channel', leaveChannel);
     socket.on('listen', listen);
     socket.on('disconnect', function(){
-        console.log('Cleaning up socket');
+        console.log('[SOCKETS] Cleaning up socket');
         var auth = idtoauth[socket.id];
         delete sockets[auth];
         delete idtoauth[socket.id];
