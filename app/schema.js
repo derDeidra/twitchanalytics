@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var RawSchema = new mongoose.Schema({
     from : String,
     text : String,
-    channel : String
+    channel : String,
+    timestamp : Date
 });
 
 var Raw = mongoose.model('Raw', RawSchema);
@@ -21,7 +22,8 @@ var User = mongoose.model('User', UserSchema);
 var ParamDataSchema = new mongoose.Schema({
     param: String,
     channel: String,
-    value: Number
+    value: Number,
+    data : [mongoose.Schema.Types.ObjectId]
 });
 
 var ParamData = mongoose.model('ParamData', ParamDataSchema);
