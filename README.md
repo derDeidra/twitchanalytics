@@ -3,9 +3,10 @@ Twitch Chat Analytics
 This app is a basic (for now) analytics platform for Twitch.tv
 
 Requirements:
--NodeJS
--MongoDB
--npm + bower
+
+1. NodeJS
+2. MongoDB
+3. npm + bower
 
 Usage:
 
