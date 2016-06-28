@@ -2,6 +2,11 @@ Twitch Chat Analytics
 
 This app is a basic (for now) analytics platform for Twitch.tv
 
+Requirements:
+-NodeJS
+-MongoDB
+-npm + bower
+
 Usage:
 
 1.  Run "npm -install" in the project root directory
@@ -10,3 +15,6 @@ Usage:
 4.  Make sure a MongoDB instance is running
 5.  Run "node server"
 6.  Navigate to localhost:1338
+
+
+Created by Ezra Dowd
