@@ -27,15 +27,26 @@ exports.handleRedirect = function(req, res) {
                     User.findOne({username : user_data.display_name}, function(err, user){
                         if(err){
                             console.log("[AUTH] Error getting user object for " + user_data.display_name);
+                            res.redirect('/');
                         } else {
                             if(user != null){
                                 User.update({_id : user._id}, {auth : body.access_token});
+                                req.session.userid = user._id
+                                res.redirect('/live');
                             } else {
-                                User.create({username : user_data.display_name, auth : body.access_token, tasks : []});
+                                User.create({username : user_data.display_name, auth : body.access_token, tasks : []}, function(err, newUser){
+                                    if(err) {
+                                        console.log("[AUTH] Error creating user");
+                                        res.redirect('/');
+                                    }
+                                    else {
+                                        req.session.userid = newUser._id;
+                                        res.redirect('/live');
+                                    }
+                                });
                             }
                         }
                     });
-                    res.redirect('/live');
                 }
             });
         }

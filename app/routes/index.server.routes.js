@@ -8,8 +8,8 @@ module.exports = function(app) {
     var tasks = require('../controllers/tasks.server.controller.js');
     var background = require('../background');
     background.init();
-    console.log("[ROUTES] Starting save loop");
-    backgroundID = setInterval(background.save, 300000);
+    console.log('[ROUTES] Starting save loop');
+    backgroundID = setInterval(background.save, 60000);
 
     //Pages
     app.get('/', auth.accessRedirect, landing.render);

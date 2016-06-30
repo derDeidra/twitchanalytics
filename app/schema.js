@@ -60,7 +60,7 @@ ModelSchema.pre("remove", function(next){
 var Model = mongoose.model('Model', ModelSchema);
 
 var TaskSchema = new mongoose.Schema({
-    owner : String,
+    owner : mongoose.Schema.Types.ObjectId,
     name : String,
     channels : {
         type: [String],

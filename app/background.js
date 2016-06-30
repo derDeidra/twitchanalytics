@@ -11,23 +11,7 @@ var taskOperationsPending = 0;
 var listenerLock = {};
 var channelTaskMapping = {};
 var rawBuffer = [];
-var rawBufferMax = 1000;
-
-/*
- {
- name : 'some name',
- channels : [{channel : 'channel'}, ...,{channel : 'channel'}],
- models : [
- {
- name : 'some name',
- params : ['some key','some other key', ... ],
- data : [{ key : 'channel-some key', value : number}, ...]
- },
- ...
- ]
- }
- */
-
+var rawBufferMax = config.get('rawBufferMax');
 
 function handleIrcSuccess(area, auth_token, details) {
     if (details) {
@@ -78,6 +62,7 @@ function parseMessage(from, text, channel) {
             }
         }
         rawBuffer = [];
+        console.log("[BACKGROUND] Finished kicking off RAW saving events");
     }
 }
 
@@ -162,7 +147,7 @@ function saveParamData() {
                         param: curParamData.param,
                         channel: curParamData.channel,
                         value: curParamData.value,
-                        data : curParamData.data
+                        data: curParamData.data
                     }, function (err) {
                         if (err) {
                             console.log('Error: There was an issue updating a parameter');
@@ -178,7 +163,7 @@ function saveParamData() {
                             param: curParamData.param,
                             channel: curParamData.channel,
                             value: curParamData.value,
-                            data : []
+                            data: []
                         }, function (err, obj) {
                             if (err) {
                                 console.log('Error: There was an issue creating a parameter');
@@ -202,22 +187,26 @@ function saveModels() {
         for (var j = 0; j < tasks_global[i].models.length; j++) {
             var curModel = tasks_global[i].models[j];
             modelOperationsPending += 1;
-            if (curModel._id) {
-                schema.Model.update({_id: curModel._id}, {
-                    name: curModel.name,
-                    params: curModel.params,
-                    data: constructIdList(curModel.data)
-                }, function (err) {
-                    if (err) {
-                        console.log('Error: There was an issue updating a model');
-                    }
-                    modelOperationsPending -= 1;
-                    if (modelOperationsPending == 0) {
-                        saveTasks();
-                    }
-                });
-            } else {
-                with ({model: curModel}) {
+            with ({model: curModel}) {
+                if (curModel._id) {
+                    schema.Model.findOne({_id: curModel._id}, function (err, obj) {
+                        if (err) {
+                            console.log('Error: There was an issue getting a model to save');
+                        } else {
+                            obj.name = model.name;
+                            obj.params = model.params;
+                            obj.data = constructIdList(model.data);
+                            obj.save(function (err) {
+                                if (err)
+                                    console.log('There was an issue saving a model');
+                                modelOperationsPending -= 1;
+                                if (modelOperationsPending == 0) {
+                                    saveTasks();
+                                }
+                            });
+                        }
+                    });
+                } else {
                     schema.Model.create({
                         name: curModel.name,
                         params: curModel.params,
@@ -243,23 +232,26 @@ function saveTasks() {
     for (var i = 0; i < tasks_global.length; i++) {
         var curTask = tasks_global[i];
         taskOperationsPending += 1;
-
-        if (curTask._id) {
-            schema.Task.update({_id: curTask._id}, {
-                name: curTask.name,
-                channels: curTask.channels,
-                models: constructIdList(curTask.models)
-            }, function (err) {
-                if (err) {
-                    console.log('Error: There was an issue updating a task');
-                }
-                taskOperationsPending -= 1;
-                if (taskOperationsPending == 0) {
-                    console.log("[BACKGROUND] Saving complete");
-                }
-            });
-        } else {
-            with ({task: curTask}) {
+        with ({task: curTask}) {
+            if (curTask._id) {
+                schema.Task.findOne({_id: curTask._id}, function (err, obj) {
+                    if (err) {
+                        console.log('Error: There was an issue finding a task');
+                    } else {
+                        obj.name = task.name;
+                        obj.channels = task.channels;
+                        obj.models = task.models;
+                        obj.save(function (err) {
+                            if (err)
+                                console.log("There was an issue updating a task")
+                            taskOperationsPending -= 1;
+                            if (taskOperationsPending == 0) {
+                                console.log("[BACKGROUND] Saving complete");
+                            }
+                        });
+                    }
+                });
+            } else {
                 schema.Task.create({
                     owner: curTask.owner,
                     name: curTask.name,
@@ -271,14 +263,14 @@ function saveTasks() {
                     } else {
                         task._id = obj._id;
                         with ({task_id: obj._id}) {
-                            User.find({username: task.owner}, function (err, userObj) {
-                                userObj.tasks.push(task_id);
-                                userObj.save(function (err) {
-                                    if (err) {
-                                        console.log("[BACKGROUND] Error updating user object");
-                                    }
-                                })
-                            });
+                            schema.User.findByIdAndUpdate(
+                                task.owner,
+                                {$push: {"tasks": task_id}},
+                                {safe: true, upsert: true, new: true},
+                                function (err) {
+                                    if (err) console.log("[AUTH] Error updating user object");
+                                }
+                            );
                         }
 
                         taskOperationsPending -= 1;
@@ -302,7 +294,7 @@ function getGlobalIndex(name) {
 
 function getTaskById(id) {
     for (var i = 0; i < tasks_global.length; i++) {
-        if (tasks_global[i]._id == id)
+        if (tasks_global[i]._id.equals(id))
             return tasks_global[i];
     }
     return null;
@@ -318,7 +310,7 @@ function initHelper() {
                     console.log('Error: There was an issue loading tasks');
                 } else {
                     for (var i = 0; i < tasks.length; i++) {
-                        console.log('[BACKGROUND] Kicking off task ' + tasks[i].task_name);
+                        console.log('[BACKGROUND] Kicking off task ' + tasks[i].name);
                         tasks_global.push({
                             _id: tasks[i]._id,
                             owner: tasks[i].owner,
@@ -350,7 +342,7 @@ exports.updateTasks = function (req, res) {
     for (var i = 0; i < tasksToUpdate.length; i++) {
         var index = getGlobalIndex(tasksToUpdate[i].task_name)
         if (index != -1) {
-            if (tasks_global[index].owner == req.session.display_name) {
+            if (tasks_global[index].owner == req.session.userid) {
                 endTask(tasks_global[index]);
                 tasks_global[index] = tasksToUpdate[i];
                 startTask(tasks_global[index]);
@@ -373,7 +365,7 @@ exports.addTasks = function (req, res) {
             rejectedTasks.push(newTasks.splice(index, 1));
             i--;
         } else {
-            newTasks[i].owner = req.session.display_name;
+            newTasks[i].owner = req.session.userid;
         }
     }
     tasks_global = tasks_global.concat(newTasks);
@@ -389,7 +381,7 @@ exports.removeTasks = function (req, res) {
     console.log("[BACKGROUND] Got request to remove " + taskNames.length + " tasks");
     var tasksRemoved = 0;
     for (var i = 0; i < taskNames.length; i++) {
-        var index = getGlobalIndex(taskName);
+        var index = getGlobalIndex(taskNames[i]);
         if (index != -1) {
             if (tasks_global[index].owner == req.session.display_name) {
                 var removedTask = tasks_global.splice(index, 1);
@@ -404,7 +396,7 @@ exports.removeTasks = function (req, res) {
 };
 
 exports.getAllUserTasks = function (req, res) {
-    console.log("[BACKGROUND] Got request for all tasks listing from user " + req.sesson.display_name);
+    console.log("[BACKGROUND] Got request for all tasks listing from user " + req.session.display_name);
     schema.User.findOne({username: req.session.display_name}).populate({
         path: "tasks",
         model: "Task"

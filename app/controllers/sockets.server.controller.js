@@ -35,7 +35,11 @@ function listen(data){
 
 function emitSuccess(area, auth_token){
     var event = auth_token + '-success-' + area;
-    sockets[auth_token].emit(event, {status : 1});
+    if(sockets[auth_token])
+        sockets[auth_token].emit(event, {status : 1});
+    else {
+        console.log("[SOCKETS] " + event);
+    }
 }
 
 function setupSocket(socket){
@@ -54,6 +58,7 @@ function setupSocket(socket){
         var auth = idtoauth[socket.id];
         delete sockets[auth];
         delete idtoauth[socket.id];
+        irc.disconnectIrcClient(auth, emitSuccess);
         irc.destroyIrcClient(auth);
     })
 }

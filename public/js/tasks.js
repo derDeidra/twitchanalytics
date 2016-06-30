@@ -40,13 +40,13 @@ app.controller('tasks-body', function($scope, $http) {
     }
 
     function httpSuccessHandler(data){
-        console.log("Success!");
+        console.log('Success!');
         console.log(data);
 
     }
 
     function httpFailureHandler(data){
-        console.log("Failure");
+        console.log('Failure');
         console.log(data);
     }
 
@@ -58,7 +58,7 @@ app.controller('tasks-body', function($scope, $http) {
                 'Content-Type': 'application/json'
             },
             data: {tasks : tasks}
-        }
+        };
         $http(req).then(httpSuccessHandler, httpFailureHandler);
     }
 
@@ -70,7 +70,7 @@ app.controller('tasks-body', function($scope, $http) {
                 'Content-Type': 'application/json'
             },
             data: {tasks : tasks}
-        }
+        };
         $http(req).then(httpSuccessHandler, httpFailureHandler);
     }
 
@@ -118,11 +118,11 @@ app.controller('tasks-body', function($scope, $http) {
                                 var param = model.params[k].param;
                                 if(!dataExistsFor(param,model.data)){
                                     for(var l = 0; l < task.channels.length; l++)
-                                    model.data.push({
-                                        channel : task.channels[l].channel,
-                                        param : param,
-                                        value : 0
-                                    });
+                                        model.data.push({
+                                            channel : task.channels[l].channel,
+                                            param : param,
+                                            value : 0
+                                        });
                                 }
                             }
                         }
@@ -133,7 +133,7 @@ app.controller('tasks-body', function($scope, $http) {
                         toSave.push(task);
                     }
                 } else {
-                    console.log("Invalid task");
+                    console.log('Invalid task');
                     console.log(task);
                 }
             }
@@ -178,7 +178,7 @@ app.controller('tasks-body', function($scope, $http) {
 
     $scope.removeTask = function(task){
         console.log(task);
-    }
+    };
 
     $scope.getTasks();
 });
