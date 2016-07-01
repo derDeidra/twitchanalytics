@@ -1,0 +1,15 @@
+{
+    "twitchapi" : {
+        "clientId" : "",
+        "clientSecret" : "",
+        "redirectUri" : "http://YOUR URL HERE:1338/auth_redirect",
+        "scopes" : ["user_read", "chat_login"]
+    },
+    "serverPort" : 1338,
+    "authorizedAdmins" : ["YOUR TWITCH USERNAME HERE"],
+    "rawBufferMax" : 100,
+    "app" : {
+        "auth_token" : "APP TWITCH ACCOUNT AUTH TOKEN",
+        "display_name" : "APP TWITCH ACCOUNT DISPLAY NAME"
+    }
+}
