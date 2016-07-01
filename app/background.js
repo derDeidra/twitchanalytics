@@ -74,11 +74,13 @@ function startTask(task) {
             channelTaskMapping[channel_name].push(task.name);
         } else {
             irc.joinIrcChannel(appAuthToken, channel_name, handleIrcSuccess);
-            irc.addIrcListener(appAuthToken, 'message#' + channel_name, function (from, text) {
-                parseMessage(from, text, channel_name);
-            });
-            listenerLock[channel_name] = 1;
-            channelTaskMapping[channel_name] = [task.name];
+            with({cname : channel_name}){
+                irc.addIrcListener(appAuthToken, 'message#' + cname, function (from, text) {
+                    parseMessage(from, text, cname);
+                });
+                listenerLock[cname] = 1;
+                channelTaskMapping[cname] = [task.name];
+            }
         }
     }
 }

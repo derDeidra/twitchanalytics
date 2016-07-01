@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard</title>
+    <title>Task Manager</title>
 
     <% include dependencies %>
 
@@ -13,58 +13,60 @@
     <link rel="stylesheet" href="css/general.css">
 </head>
 <body ng-controller="tasks-body">
-    <% include navbar %>
-    <div class="descDiv">
-        <div ng-repeat="task in tasks_global" class="panel panel-default">
-            <div class="panel-heading">
-                <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
-                    {{ task.name || 'Click to enter task name' }}
-                </a>
-            </div>
-            <div class="panel-body">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5>Channels</h5>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-group">
-                            <li ng-repeat="channel in task.channels" class="list-group-item" editable-text="channel.channel" onbeforesave="markChanged(task)">
-                                {{ channel.channel || 'Click to enter channel name' }}
-                            </li>
-                        </ul>
-                        <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5>Models</h5>
-                    </div>
-                    <div class="panel-body">
-                        <div class="panel panel-default" ng-repeat="model in task.models">
-                            <div class="panel-heading">
-                                <a href="#" editable-text="model.name" onbeforesave="markChanged(task)">
-                                    {{ model.name || 'Click to enter model name' }}
-                                </a>
-                            </div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li ng-repeat="param in model.params" class="list-group-item" editable-text="param.param" onbeforesave="markChanged(task)">
-                                        {{ param.param || 'Click to enter parameter' }}
-                                    </li>
-                                </ul>
-                                <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
-                            </div>
-                        </div>
-                        <button class="btn btn-default" ng-click="addModel(task)">Add Model</button>
-                    </div>
-                </div>
-                <button class="btn btn-default" ng-click="removeTask(task)">Delete Task</button>
-            </div>
+<% include navbar %>
+<div class="descDiv">
+    <div ng-repeat="task in tasks_global" class="panel panel-default">
+        <div class="panel-heading">
+            <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
+                {{ task.name || 'Click to enter task name' }}
+            </a>
         </div>
-        <div class="buttonDiv">
-            <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
-            <button class="btn btn-default" ng-click="saveTasks()" id="saveTaskButton">Save Tasks</button>
+        <div class="panel-body">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5>Channels</h5>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li ng-repeat="channel in task.channels" class="list-group-item" editable-text="channel.channel"
+                            onbeforesave="markChanged(task)">
+                            {{ channel.channel || 'Click to enter channel name' }}
+                        </li>
+                    </ul>
+                    <button class="btn btn-default" ng-click="addChannel(task)">Add Channel</button>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5>Models</h5>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default" ng-repeat="model in task.models">
+                        <div class="panel-heading">
+                            <a href="#" editable-text="model.name" onbeforesave="markChanged(task)">
+                                {{ model.name || 'Click to enter model name' }}
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li ng-repeat="param in model.params" class="list-group-item"
+                                    editable-text="param.param" onbeforesave="markChanged(task)">
+                                    {{ param.param || 'Click to enter parameter' }}
+                                </li>
+                            </ul>
+                            <button class="btn btn-default" ng-click="addParam(model)">Add Param</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-default" ng-click="addModel(task)">Add Model</button>
+                </div>
+            </div>
+            <button class="btn btn-default" ng-click="removeTask(task)">Delete Task</button>
         </div>
     </div>
+    <div class="buttonDiv">
+        <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
+        <button class="btn btn-default" ng-click="saveTasks()" id="saveTaskButton">Save Tasks</button>
+    </div>
+</div>
 </body>
 </html>

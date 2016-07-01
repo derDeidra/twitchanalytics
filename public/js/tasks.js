@@ -42,12 +42,13 @@ app.controller('tasks-body', function($scope, $http) {
     function httpSuccessHandler(data){
         console.log('Success!');
         console.log(data);
-
+        swal("Success!", "Tasks successfully saved!", "success")
     }
 
     function httpFailureHandler(data){
         console.log('Failure');
         console.log(data);
+        swal("Oops...", "Something went wrong saving your tasks!", "error");
     }
 
     function addNewTasks(tasks){
@@ -109,7 +110,8 @@ app.controller('tasks-body', function($scope, $http) {
                                     model.data.push({
                                         channel : task.channels[k].channel,
                                         param : model.params[l].param,
-                                        value : 0
+                                        value : 0,
+                                        data : []
                                     });
                                 }
                             }
@@ -121,7 +123,8 @@ app.controller('tasks-body', function($scope, $http) {
                                         model.data.push({
                                             channel : task.channels[l].channel,
                                             param : param,
-                                            value : 0
+                                            value : 0,
+                                            data : []
                                         });
                                 }
                             }

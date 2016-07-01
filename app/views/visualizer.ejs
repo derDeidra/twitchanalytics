@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="visualizer">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Visualizer</title>
+
+    <% include dependencies %>
+
+    <script src="js/visualizer.js"></script>
+    <link rel="stylesheet" href="css/general.css">
+</head>
+<body ng-controller="visualizer-body">
+<% include navbar %>
+<div class="descDiv">
+    <div ng-repeat="task in tasks_global" class="panel panel-default">
+        <div class="panel-heading">
+            <h3>{{task.name}}</h3>
+        </div>
+        <div class="panel-body">
+            <div ng-repeat="model in task.models" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>{{model.name}}</h3>
+                </div>
+                <div class="panel-body">
+                    <div ng-repeat="channel in task.channels" class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>{{channel.channel}} Local Aggregate</h3>
+                        </div>
+                        <div class="panel-body">
+                            <canvas class="chart chart-pie"
+                                    chart-data="resolveChartData('channelLocalAggregate', task.name, model.name, channel.channel)"
+                                    chart-labels="resolveChartLabel('channelLocalAggregate', task.name, model.name, channel.channel)"
+                                    chart-type="type"
+                                    chart-legend="true">
+                            </canvas>
+                        </div>
+                    </div>
+                    <div ng-repeat="param in model.params" class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>{{param.param}} cross channel aggregation</h3>
+                        </div>
+                        <div class="panel-body">
+                            <canvas class="chart chart-pie"
+                                    chart-data="resolveChartData('paramChannelAggregate', task.name, model.name, param.param)"
+                                    chart-labels="resolveChartLabel('paramChannelAggregate', task.name, model.name, param.param)"
+                                    chart-type="type"
+                                    chart-legend="true">
+                            </canvas>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>Global param allocation</h3>
+                        </div>
+                        <div class="panel-body">
+                            <canvas class="chart chart-pie"
+                                    chart-data="resolveChartData('paramGlobalAggregate', task.name, model.name)"
+                                    chart-labels="resolveChartLabel('paramGlobalAggregate', task.name, model.name)"
+                                    chart-type="type"
+                                    chart-legend="true">
+                            </canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

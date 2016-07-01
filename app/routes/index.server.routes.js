@@ -6,6 +6,7 @@ module.exports = function(app) {
     var live = require('../controllers/live.server.controller');
     var auth = require('../controllers/auth.server.controller');
     var tasks = require('../controllers/tasks.server.controller.js');
+    var visualizer = require('../controllers/visualizer.server.controller.js');
     var background = require('../background');
     background.init();
     console.log('[ROUTES] Starting save loop');
@@ -14,7 +15,8 @@ module.exports = function(app) {
     //Pages
     app.get('/', auth.accessRedirect, landing.render);
     app.get('/live', auth.accessControl, live.render);
-    app.get('/tasks', auth.adminAccessControl, tasks.render);
+    app.get('/tasks', auth.accessControl, tasks.render);
+    app.get('/visualizer', auth.accessControl, visualizer.render)
 
     //Auth
     app.get('/auth', auth.initialize);
