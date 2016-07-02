@@ -2,7 +2,7 @@ Twitch Chat Analytics
 
 This app is a basic (for now) analytics platform for Twitch.tv
 
-Check out the current live version at <a href="http://ezra.gg:1338/">ezra.gg</a>
+Check out the current live version at <a target="_blank" href="http://ezra.gg:1338/">ezra.gg</a>
 
 Requirements:
 
