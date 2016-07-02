@@ -4,6 +4,7 @@ var config = require('config');
 
 var appAuthToken = config.get('app.auth_token');
 var appDisplayName = config.get('app.display_name');
+var saveRawData = config.get('saveRawData');
 var tasks_global = [];
 var paramOperationsPending = 0;
 var modelOperationsPending = 0;
@@ -41,28 +42,30 @@ function parseMessage(from, text, channel) {
             }
         }
     }
-    rawBuffer.push(rawObj);
-    if (rawBuffer.length > rawBufferMax) {
-        for (var i = 0; i < rawBuffer.length; i++) {
-            var curRaw = rawBuffer[i];
-            with ({prevRaw: curRaw}) {
-                schema.Raw.create({
-                    from: curRaw.from,
-                    text: curRaw.text,
-                    channel: curRaw.channel,
-                    timestamp: curRaw.timestamp
-                }, function (err, raw) {
-                    if (err) console.log("[BACKGROUND] Error inserting raw data");
-                    else {
-                        for (var j = 0; j < prevRaw.releventParamObjs.length; j++) {
-                            prevRaw.releventParamObjs[j].data.push(raw._id);
+    if(saveRawData) {
+        rawBuffer.push(rawObj);
+        if (rawBuffer.length > rawBufferMax) {
+            for (var i = 0; i < rawBuffer.length; i++) {
+                var curRaw = rawBuffer[i];
+                with ({prevRaw: curRaw}) {
+                    schema.Raw.create({
+                        from: curRaw.from,
+                        text: curRaw.text,
+                        channel: curRaw.channel,
+                        timestamp: curRaw.timestamp
+                    }, function (err, raw) {
+                        if (err) console.log("[BACKGROUND] Error inserting raw data");
+                        else {
+                            for (var j = 0; j < prevRaw.releventParamObjs.length; j++) {
+                                prevRaw.releventParamObjs[j].data.push(raw._id);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
+            rawBuffer = [];
+            console.log("[BACKGROUND] Finished kicking off RAW saving events");
         }
-        rawBuffer = [];
-        console.log("[BACKGROUND] Finished kicking off RAW saving events");
     }
 }
 
