@@ -13,9 +13,20 @@ body {
     border-color: #1E1A19;
 }
 
-.list-group-item {
-    background-color: #1E1A19;
-    border-color: #5b5a5c;
+a.list-group-item {
+    background-color: #5b5a5c;
+    border-color: black;
+    color: white;
+}
+
+#titleoverride {
+    color: white;
+}
+
+a.list-group-item:hover, a.list-group-item:focus
+{
+    color: white;
+    background-color: #302f31;
 }
 
 .editable-click, a.editable-click {
@@ -53,6 +64,16 @@ body {
 .buttonDiv {
     text-align: center;
     padding-bottom: 5px;
+}
+
+.summary-list {
+    list-style: none;
+    color: white;
+}
+
+.summary-list li {
+    display: inline;
+    padding: 5px;
 }
 
 .buttonDiv button {

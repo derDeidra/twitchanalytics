@@ -20,6 +20,8 @@ var app = angular.module('tasks', ['chart.js', 'xeditable']);
 */
 app.controller('tasks-body', function($scope, $http) {
     $scope.tasks_global = [];
+    $scope.task = {};
+    $scope.edit_task = false;
 
     function isValidTask(task){
         if(task.name.length <= 0)
@@ -155,6 +157,8 @@ app.controller('tasks-body', function($scope, $http) {
             channels: [],
             models: []
         });
+        $scope.task = $scope.tasks_global[$scope.tasks_global.length-1];
+        $scope.edit_task = true;
     };
 
     $scope.addChannel = function(task) {
@@ -182,6 +186,15 @@ app.controller('tasks-body', function($scope, $http) {
     $scope.removeTask = function(task){
         console.log(task);
     };
+
+    $scope.editTask = function(task){
+        $scope.task = task;
+        $scope.edit_task = true;
+    }
+
+    $scope.finishEdit = function(){
+        $scope.edit_task = false;
+    }
 
     $scope.getTasks();
 });

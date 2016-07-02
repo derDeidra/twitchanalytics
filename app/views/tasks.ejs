@@ -8,14 +8,35 @@
     <title>Task Manager</title>
 
     <% include dependencies %>
-
     <script src="js/tasks.js"></script>
     <link rel="stylesheet" href="css/general.css">
 </head>
 <body ng-controller="tasks-body">
 <% include navbar %>
 <div class="descDiv">
-    <div ng-repeat="task in tasks_global" class="panel panel-default">
+    <div ng-if="!edit_task" class="panel panel-default">
+        <div class="panel-heading">
+            <h3>Task List</h3>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                <a class="list-group-item" href="#" ng-click="editTask(task)" ng-repeat="task in tasks_global" >
+                    <h3 id="titleoverride" class="list-group-item-heading">{{task.name}}</h3>
+                    <p class="list-group-item-text">
+                    <h4>Channels</h4>
+                    <ul class="summary-list">
+                        <li ng-repeat="channel in task.channels">{{channel.channel}}</li>
+                    </ul>
+                    <h4>Models</h4>
+                    <ul class="summary-list">
+                        <li ng-repeat="model in task.models">{{model.name}}</li>
+                    </ul>
+                    </p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div ng-if="edit_task" class="panel panel-default">
         <div class="panel-heading">
             <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
                 {{ task.name || 'Click to enter task name' }}
@@ -61,6 +82,7 @@
                 </div>
             </div>
             <button class="btn btn-default" ng-click="removeTask(task)">Delete Task</button>
+            <button class="btn btn-default" ng-click="finishEdit()">Finish</button>
         </div>
     </div>
     <div class="buttonDiv">

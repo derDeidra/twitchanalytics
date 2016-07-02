@@ -3,6 +3,8 @@ var app = angular.module('visualizer', ['chart.js']);
 app.controller('visualizer-body', function($scope, $http) {
     $scope.tasks_global = [];
     $scope.chart_data = {};
+    $scope.view_task = false;
+    $scope.task = {};
 
     function findParamDataForChannel(model, channel){
         var paramData = [];
@@ -85,6 +87,15 @@ app.controller('visualizer-body', function($scope, $http) {
         } else if(type == "paramGlobalAggregate"){
             return $scope.chart_data[task][model].aggregate_labels;
         }
+    }
+
+    $scope.viewTask = function(task){
+        $scope.task = task;
+        $scope.view_task = true;
+    }
+
+    $scope.finishViewing = function(){
+        $scope.view_task = false;
     }
 
     $scope.getTasks();
