@@ -11,13 +11,17 @@ app.controller('live-body', function($scope){
     $scope.data_pie = [];
     $scope.labels_pie = [];
 
+    $scope.chat = [];
+
     function handleDataConnection(data){
         for(var i = 0; i < $scope.labels_pie.length; i++){
             var val = $scope.labels_pie[i];
             var reg = new RegExp('.*' + val + '.*', 'g');
-            var count = (data.text.match(reg) || []).length;
-            $scope.data_pie[i] += count;
+            $scope.data_pie[i] += (data.text.match(reg) || []).length;
         }
+        $scope.chat.push(data);
+        if(($scope.labels_pie.length > 0 && $scope.chat.length > 23) || ($scope.labels_pie.length == 0 && $scope.chat.length > 11))
+            $scope.chat.shift();
         $scope.$apply();
     }
 
@@ -49,6 +53,7 @@ app.controller('live-body', function($scope){
 
     $scope.channelConnect = function(){
         var channelName = $scope.channelName.toLowerCase();
+        $scope.channelName = '';
         $scope.currentChannel = channelName;
         socket.on(authToken + '-' + channelName + '-message', handleDataConnection);
         socket.emit('join-channel', {auth_token : authToken, channel: channelName});

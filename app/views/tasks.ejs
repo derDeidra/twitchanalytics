@@ -13,8 +13,7 @@
 </head>
 <body ng-controller="tasks-body">
 <% include navbar %>
-<div class="descDiv">
-    <div ng-if="view_task" class="panel panel-default">
+    <div ng-if="view_task" class="panel panel-default descDiv">
         <div class="panel-heading">
             <h3>Task List</h3>
         </div>
@@ -35,8 +34,12 @@
                 </a>
             </div>
         </div>
+        <div class="buttonDiv">
+            <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
+            <button class="btn btn-default" ng-click="saveTasks()" id="saveTaskButton">Save Tasks</button>
+        </div>
     </div>
-    <div ng-if="edit_task" class="panel panel-default">
+    <div ng-if="edit_task" class="panel panel-default descDiv col-md-8">
         <div class="panel-heading">
             <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
                 {{ task.name || 'Click to enter task name' }}
@@ -85,10 +88,6 @@
             <button class="btn btn-default" ng-click="finishEdit()">Finish</button>
         </div>
     </div>
-    <div class="buttonDiv">
-        <button class="btn btn-default" ng-click="addTask()" id="addTaskButton">Add Task</button>
-        <button class="btn btn-default" ng-click="saveTasks()" id="saveTaskButton">Save Tasks</button>
-    </div>
-</div>
+    <% include footer %>
 </body>
 </html>

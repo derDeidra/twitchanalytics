@@ -1,5 +1,11 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
     background: #444444;
+    margin-bottom: 40px;
 }
 
 .panel > .panel-heading {
@@ -9,12 +15,13 @@ body {
 }
 
 .panel {
-    background-color: #444444;
-    border-color: #1E1A19;
+    background-color: #1E1A19;
+    border-color: #000000;
+    padding: 10px;
 }
 
 a.list-group-item, li.list-group-item {
-    background-color: #5b5a5c;
+    background-color: #444444;
     border-color: black;
     color: white;
 }
@@ -48,21 +55,24 @@ a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.l
     color: white;
 }
 
-.descDiv {
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
+.liveDescDiv {
     padding: 10px;
     border-radius: 5px;
     background: #1E1A19;
     color: white;
 }
 
-.descDiv input {
+.descDiv {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.descDiv input, .liveDescDiv input {
     color: black;
 }
 
-.descDiv select {
+.descDiv select, .liveDescDiv select {
     color: black;
 }
 
@@ -98,4 +108,37 @@ a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.l
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+}
+
+.chatBox {
+    height: 100%;
+}
+
+.liveContainer {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+}
+.liveContainer > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 40px;
+    background-color: #1E1A19;
+    border-color: #1E1A19;
+    color: white;
+}
+
+.footer-container {
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-top: 10px;
 }

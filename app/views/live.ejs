@@ -19,40 +19,55 @@
 </head>
 <body ng-controller="live-body">
     <% include navbar %>
-    <div class="panel panel-default descDiv">
-        <div class="panel-body">
-            <ul>
-                <li ng-repeat="element in feedback">{{element}}</li>
-            </ul>
-            <p>Your auth token is: <%=auth_token%></p>
-            <input type="text" ng-model="channelName"  ng-disabled="!ircActive"/>
-            <button class="btn btn-default" ng-click="channelConnect()" ng-disabled="channelActive || !ircActive">Enter Channel</button>
-            <button class="btn btn-default" ng-click="channelDisconnect()" ng-disabled="!channelActive">Leave Channel</button>
+    <div class="liveContainer">
+        <div class="col-md-8">
+            <div class="panel panel-default liveDescDiv">
+                <div class="panel-body">
+                    <ul>
+                        <li ng-repeat="element in feedback">{{element}}</li>
+                    </ul>
+                    <p>Your auth token is: <%=auth_token%></p>
+                    <input type="text" ng-model="channelName" ng-keydown="$event.which === 13 && channelConnect()" ng-disabled="channelActive || !ircActive"/>
+                    <button class="btn btn-default"  ng-click="channelConnect()" ng-disabled="channelActive || !ircActive">Enter Channel</button>
+                    <button class="btn btn-default" ng-click="channelDisconnect()" ng-disabled="!channelActive">Leave Channel</button>
+                </div>
+            </div>
+            <div class="panel panel-default liveDescDiv">
+                <div class="panel-heading">
+                    Twitch Model Parameters
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li ng-repeat="element in labels_pie">{{element}}</li>
+                    </ul>
+                    <input type="text" ng-model="modelParam" ng-keydown="$event.which === 13 && addModelParam()"/>
+                    <button class="btn btn-default" ng-click="addModelParam()">Add Param</button>
+                    <button class="btn btn-default" ng-click="resetParams()">Reset Params</button>
+                    <button class="btn btn-default" ng-click="resetValues()">Reset Values</button>
+                </div>
+            </div>
+            <div class="panel panel-default liveDescDiv">
+                <div class="panel-heading">
+                    Meme Density Visualization
+                </div>
+                <div class="panel-body">
+                    <canvas class="chart chart-pie" chart-data="data_pie" chart-labels="labels_pie" chart-type="type" chart-legend="true"></canvas>
+                </div>
+            </div>
         </div>
+        <div class="col-md-4 test">
+            <div class="panel panel-default liveDescDiv chatBox">
+                <div class="panel-heading">
+                    Chat
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li ng-repeat="msg in chat" class="list-group-item">{{msg.from}} : {{msg.text}}</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="panel panel-default descDiv">
-        <div class="panel-heading">
-            Twitch Model Parameters
-        </div>
-        <div class="panel-body">
-            <ul>
-                <li ng-repeat="element in labels_pie">{{element}}</li>
-            </ul>
-            <input type="text" ng-model="modelParam"/>
-            <button class="btn btn-default" ng-click="addModelParam()">Add Param</button>
-            <button class="btn btn-default" ng-click="resetParams()">Reset Params</button>
-            <button class="btn btn-default" ng-click="resetValues()">Reset Values</button>
-        </div>
-    </div>
-    <div class="panel panel-default descDiv">
-        <div class="panel-heading">
-            Meme Density Visualization
-        </div>
-        <div class="panel-body">
-            <canvas class="chart chart-pie" chart-data="data_pie" chart-labels="labels_pie" chart-type="type" chart-legend="true"></canvas>
-        </div>
-    </div>
-
+    <% include footer %>
 </body>
 </html>

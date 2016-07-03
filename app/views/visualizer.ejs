@@ -14,8 +14,7 @@
 </head>
 <body ng-controller="visualizer-body">
 <% include navbar %>
-<div class="descDiv">
-    <div ng-if="view_task" class="panel panel-default">
+    <div ng-if="view_task" class="panel panel-default descDiv">
         <div class="panel-heading">
             <h3>Task List</h3>
         </div>
@@ -38,7 +37,7 @@
             <button class="btn btn-default" ng-click="queryInterface()">Custom Query</button>
         </div>
     </div>
-    <div ng-if="visualize_task" class="panel panel-default">
+    <div ng-if="visualize_task" class="panel panel-default descDiv">
         <div class="panel-heading">
             <h3>{{task.name}}</h3>
         </div>
@@ -92,7 +91,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="query_interface" class="panel panel-default">
+    <div ng-if="query_interface" class="panel panel-default descDiv">
         <div class="panel-heading">
             <h3>Query Builder</h3>
         </div>
@@ -138,6 +137,6 @@
             </div>
         </div>
     </div>
-</div>
+    <% include footer %>
 </body>
 </html>

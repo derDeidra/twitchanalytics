@@ -159,6 +159,7 @@ app.controller('tasks-body', function($scope, $http) {
             models: []
         });
         $scope.task = $scope.tasks_global[$scope.tasks_global.length-1];
+        $scope.view_task = false;
         $scope.edit_task = true;
     };
 
@@ -186,6 +187,7 @@ app.controller('tasks-body', function($scope, $http) {
 
     $scope.removeTask = function(task){
         console.log(task);
+        console.log($scope.tasks_global.indexOf(task));
     };
 
     $scope.editTask = function(task){
