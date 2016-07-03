@@ -26,6 +26,7 @@ module.exports = function(app) {
     //App GET endpoints
     app.get('/getTasks', auth.accessControl, background.getAllUserTasks);
     app.get('/getAllTasks', auth.adminAccessControl, background.getAllTasks);
+    app.get('/query', auth.accessControl, background.customQuery)
 
     //App POST endpoints
     app.post('/addTasks', auth.accessControl, background.addTasks);

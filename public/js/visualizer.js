@@ -1,10 +1,13 @@
-var app = angular.module('visualizer', ['chart.js']);
+var app = angular.module('visualizer', ['chart.js', 'xeditable']);
 
 app.controller('visualizer-body', function($scope, $http) {
     $scope.tasks_global = [];
     $scope.chart_data = {};
-    $scope.view_task = false;
+    $scope.view_task = true;
+    $scope.visualize_task = false;
+    $scope.query_interface = false;
     $scope.task = {};
+    $scope.query = {};
 
     function findParamDataForChannel(model, channel){
         var paramData = [];
@@ -79,7 +82,7 @@ app.controller('visualizer-body', function($scope, $http) {
         } else if(type == "paramGlobalAggregate"){
             return $scope.chart_data[task][model].aggregate_data;
         }
-    }
+    };
 
     $scope.resolveChartLabel= function(type, task, model, final){
         if(type == "channelLocalAggregate" || type == "paramChannelAggregate"){
@@ -87,16 +90,47 @@ app.controller('visualizer-body', function($scope, $http) {
         } else if(type == "paramGlobalAggregate"){
             return $scope.chart_data[task][model].aggregate_labels;
         }
-    }
+    };
 
-    $scope.viewTask = function(task){
+    $scope.visualizeTask = function(task){
         $scope.task = task;
-        $scope.view_task = true;
-    }
-
-    $scope.finishViewing = function(){
         $scope.view_task = false;
-    }
+        $scope.visualize_task = true;
+    };
+
+    $scope.finishVisualization = function(){
+        $scope.visualize_task = false;
+        $scope.view_task = true;
+    };
+
+    $scope.queryInterface = function(){
+        $scope.query = {channels : [], params : [], senders : [], startdate : null, enddate : null};
+        $scope.visualize_task = false;
+        $scope.view_task = false;
+        $scope.query_interface = true;
+    };
+
+    $scope.finishQuery = function(){
+        $scope.query_interface = false;
+        $scope.view_task = true;
+    };
+
+    $scope.addQueryChannel = function(){
+      $scope.query.channels.push({channel : "Enter a channel name"});
+    };
+
+    $scope.addQuerySender = function(){
+        $scope.query.senders.push({sender : "Enter a sender name"});
+    };
+
+    $scope.addQueryParam = function(){
+        $scope.query.params.push({param : "Enter a param"});
+    };
+
+    $scope.executeQuery = function(){
+        console.log("Executing query with content");
+        console.log($scope.query);
+    };
 
     $scope.getTasks();
 });

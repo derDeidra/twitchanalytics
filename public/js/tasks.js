@@ -21,6 +21,7 @@ var app = angular.module('tasks', ['chart.js', 'xeditable']);
 app.controller('tasks-body', function($scope, $http) {
     $scope.tasks_global = [];
     $scope.task = {};
+    $scope.view_task = true;
     $scope.edit_task = false;
 
     function isValidTask(task){
@@ -189,12 +190,14 @@ app.controller('tasks-body', function($scope, $http) {
 
     $scope.editTask = function(task){
         $scope.task = task;
+        $scope.view_task = false;
         $scope.edit_task = true;
-    }
+    };
 
     $scope.finishEdit = function(){
         $scope.edit_task = false;
-    }
+        $scope.view_task = true;
+    };
 
     $scope.getTasks();
 });

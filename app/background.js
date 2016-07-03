@@ -14,11 +14,99 @@ var channelTaskMapping = {};
 var rawBuffer = [];
 var rawBufferMax = config.get('rawBufferMax');
 
+function getGlobalIndex(name) {
+    for (var i = 0; i < tasks_global.length; i++) {
+        if (tasks_global[i].name == name)
+            return i;
+    }
+    return -1;
+}
+
+function getTaskById(id) {
+    for (var i = 0; i < tasks_global.length; i++) {
+        if (tasks_global[i]._id.equals(id))
+            return tasks_global[i];
+    }
+    return null;
+}
+
 function handleIrcSuccess(area, auth_token, details) {
     if (details) {
         console.log('[BACKGROUND] ' + auth_token + '-success-' + area + ' ' + details);
     } else {
         console.log('[BACKGROUND] ' + auth_token + '-success-' + area)
+    }
+}
+
+function parseOutParamData(paramData) {
+    var paramDataObjs = [];
+    for (var i = 0; i < paramData.length; i++) {
+        paramDataObjs.push({
+            _id: paramData[i]._id,
+            param: paramData[i].param,
+            channel: paramData[i].channel,
+            value: paramData[i].value,
+            data: paramData[i].data
+        });
+    }
+    return paramDataObjs;
+}
+
+function parseOutModels(models) {
+    var model_objs = [];
+    for (var i = 0; i < models.length; i++) {
+        model_objs.push({
+            _id: models[i]._id,
+            name: models[i].name,
+            params: models[i].params,
+            data: parseOutParamData(models[i].data)
+        });
+    }
+    return model_objs;
+}
+
+function constructIdList(objArr) {
+    var objIds = [];
+    for (var i = 0; i < objArr.length; i++) {
+        objIds.push(objArr[i]._id);
+    }
+    return objIds;
+}
+
+function startTask(task) {
+    for (var i = 0; i < task.channels.length; i++) {
+        var channel_name = task.channels[i].channel;
+        if (listenerLock[channel_name]) {
+            listenerLock[channel_name]++;
+            channelTaskMapping[channel_name].push(task.name);
+        } else {
+            irc.joinIrcChannel(appAuthToken, channel_name, handleIrcSuccess);
+            with({cname : channel_name}){
+                irc.addIrcListener(appAuthToken, 'message#' + cname, function (from, text) {
+                    parseMessage(from, text, cname);
+                });
+                listenerLock[cname] = 1;
+                channelTaskMapping[cname] = [task.name];
+            }
+        }
+    }
+}
+
+function endTask(task) {
+    for (var i = 0; i < task.channels.length; i++) {
+        var channel_name = task.channels[i].channel;
+        listenerLock[channel_name]--;
+        if (listenerLock[channel_name] == 0) {
+            irc.removeIrcListener(appAuthToken, 'message#' + channel_name);
+            irc.leaveIrcChannel(appAuthToken, channel_name, handleIrcSuccess);
+        }
+    }
+    for (var i = 0; i < channelTaskMapping.length; i++) {
+        for (var j = channelTaskMapping[i].length - 1; j >= 0; j--) {
+            if (channelTaskMapping[i][j] === task.name) {
+                channelTaskMapping[i].splice(j, 1);
+            }
+        }
     }
 }
 
@@ -67,78 +155,6 @@ function parseMessage(from, text, channel) {
             console.log("[BACKGROUND] Finished kicking off RAW saving events");
         }
     }
-}
-
-function startTask(task) {
-    for (var i = 0; i < task.channels.length; i++) {
-        var channel_name = task.channels[i].channel;
-        if (listenerLock[channel_name]) {
-            listenerLock[channel_name]++;
-            channelTaskMapping[channel_name].push(task.name);
-        } else {
-            irc.joinIrcChannel(appAuthToken, channel_name, handleIrcSuccess);
-            with({cname : channel_name}){
-                irc.addIrcListener(appAuthToken, 'message#' + cname, function (from, text) {
-                    parseMessage(from, text, cname);
-                });
-                listenerLock[cname] = 1;
-                channelTaskMapping[cname] = [task.name];
-            }
-        }
-    }
-}
-
-function endTask(task) {
-    for (var i = 0; i < task.channels.length; i++) {
-        var channel_name = task.channels[i].channel;
-        listenerLock[channel_name]--;
-        if (listenerLock[channel_name] == 0) {
-            irc.removeIrcListener(appAuthToken, 'message#' + channel_name);
-            irc.leaveIrcChannel(appAuthToken, channel_name, handleIrcSuccess);
-        }
-    }
-    for (var i = 0; i < channelTaskMapping.length; i++) {
-        for (var j = channelTaskMapping[i].length - 1; j >= 0; j--) {
-            if (channelTaskMapping[i][j] === task.name) {
-                channelTaskMapping[i].splice(j, 1);
-            }
-        }
-    }
-}
-
-function parseOutParamData(paramData) {
-    var paramDataObjs = [];
-    for (var i = 0; i < paramData.length; i++) {
-        paramDataObjs.push({
-            _id: paramData[i]._id,
-            param: paramData[i].param,
-            channel: paramData[i].channel,
-            value: paramData[i].value,
-            data: paramData[i].data
-        });
-    }
-    return paramDataObjs;
-}
-
-function parseOutModels(models) {
-    var model_objs = [];
-    for (var i = 0; i < models.length; i++) {
-        model_objs.push({
-            _id: models[i]._id,
-            name: models[i].name,
-            params: models[i].params,
-            data: parseOutParamData(models[i].data)
-        });
-    }
-    return model_objs;
-}
-
-function constructIdList(objArr) {
-    var objIds = [];
-    for (var i = 0; i < objArr.length; i++) {
-        objIds.push(objArr[i]._id);
-    }
-    return objIds;
 }
 
 function saveParamData() {
@@ -289,22 +305,6 @@ function saveTasks() {
     }
 }
 
-function getGlobalIndex(name) {
-    for (var i = 0; i < tasks_global.length; i++) {
-        if (tasks_global[i].name == name)
-            return i;
-    }
-    return -1;
-}
-
-function getTaskById(id) {
-    for (var i = 0; i < tasks_global.length; i++) {
-        if (tasks_global[i]._id.equals(id))
-            return tasks_global[i];
-    }
-    return null;
-}
-
 function initHelper() {
     schema.Task.find({}).populate({path: 'models', model: 'Model'}).exec(function (err, tasks) {
         if (err) {
@@ -421,4 +421,47 @@ exports.getAllUserTasks = function (req, res) {
 
 exports.getAllTasks = function (req, res) {
     res.json(tasks_global);
+}
+
+exports.customQuery = function(req, res){
+    if(req.query.q) {
+        var queryInput = JSON.parse(req.query.q);
+        var queryObj = { $and : [] };
+        if(queryInput.params && queryInput.params.length > 0){
+            var paramObj = { $or : [] };
+            for(var i = 0; i < queryInput.params.length; i++){
+                paramObj.$or.push({'param' : {$regex : '.*' + queryInput.params[i].param + '.*'}});
+            }
+            queryObj.$and.push(paramObj)
+        }
+        if(queryInput.channels && queryInput.channels.length > 0){
+            var paramObj = { $or : [] };
+            for(var i = 0; i < queryInput.channels.length; i++) {
+                paramObj.$or.push({'channel' : queryInput.channels[i].channel});
+            }
+        }
+        if(queryInput.senders && queryInput.senders.length > 0){
+            var senderObj = { $or : [] };
+            for(var i = 0; i < queryInput.senders.length; i++) {
+                senderObj.$or.push({'from' : queryInput.senders[i].sender});
+            }
+        }
+        if(queryInput.startdate){
+            queryObj.push({'timestamp' : {$gte : queryInput.startdate}});
+        }
+        if(queryInput.enddate){
+            queryObj.push({'timestamp' : {$lte : queryInput.startdate}});
+        }
+        schema.Raw.find(queryObj, function(err, records){
+            if(err) {
+                console.log("[BACKGROUND] Error executing custom query");
+                console.log(err);
+                res.send("Error executing custom query")
+            }
+            else {
+                res.json(records);
+            }
+        });
+    } else
+        res.send("No query specified");
 }
