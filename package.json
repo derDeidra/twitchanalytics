@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "description": "A analytics platform for twitch chat",
   "main": "server.js",
+  "license" : "MIT",
+  "repository" : "https://github.com/derDeidra/twitchanalytics.git",
   "dependencies": {
     "ejs": "latest",
     "express": "latest",
