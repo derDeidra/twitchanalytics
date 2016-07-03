@@ -116,21 +116,33 @@ app.controller('visualizer-body', function($scope, $http) {
     };
 
     $scope.addQueryChannel = function(){
-      $scope.query.channels.push({channel : "Enter a channel name"});
+      $scope.query.channels.push({channel : ""});
     };
 
     $scope.addQuerySender = function(){
-        $scope.query.senders.push({sender : "Enter a sender name"});
+        $scope.query.senders.push({sender : ""});
     };
 
     $scope.addQueryParam = function(){
-        $scope.query.params.push({param : "Enter a param"});
+        $scope.query.params.push({param : ""});
     };
 
     $scope.executeQuery = function(){
         console.log("Executing query with content");
         console.log($scope.query);
+        $http({
+            method: 'GET',
+            url: '/query?q=' + encodeURIComponent(JSON.stringify($scope.query))
+        }).then(function successCallback(response) {
+            console.log(response);
+        }, function errorCallback(response) {
+            console.log(response);
+        });
     };
 
     $scope.getTasks();
+});
+
+app.run(function(editableOptions) {
+    editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 });

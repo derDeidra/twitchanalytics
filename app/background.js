@@ -430,21 +430,23 @@ exports.customQuery = function(req, res){
         if(queryInput.params && queryInput.params.length > 0){
             var paramObj = { $or : [] };
             for(var i = 0; i < queryInput.params.length; i++){
-                paramObj.$or.push({'param' : {$regex : '.*' + queryInput.params[i].param + '.*'}});
+                paramObj.$or.push({'text' : {$regex : '.*' + queryInput.params[i].param + '.*'}});
             }
             queryObj.$and.push(paramObj)
         }
         if(queryInput.channels && queryInput.channels.length > 0){
-            var paramObj = { $or : [] };
+            var channelObj = { $or : [] };
             for(var i = 0; i < queryInput.channels.length; i++) {
-                paramObj.$or.push({'channel' : queryInput.channels[i].channel});
+                channelObj.$or.push({'channel' : queryInput.channels[i].channel});
             }
+            queryObj.$and.push(channelObj)
         }
         if(queryInput.senders && queryInput.senders.length > 0){
             var senderObj = { $or : [] };
             for(var i = 0; i < queryInput.senders.length; i++) {
                 senderObj.$or.push({'from' : queryInput.senders[i].sender});
             }
+            queryObj.$and.push(senderObj)
         }
         if(queryInput.startdate){
             queryObj.push({'timestamp' : {$gte : queryInput.startdate}});
