@@ -13,25 +13,30 @@
 </head>
 <body ng-controller="tasks-body">
 <% include navbar %>
-    <div ng-if="view_task" class="panel panel-default descDiv">
+    <div ng-if="view_task" class="panel panel-default content-div">
         <div class="panel-heading">
             <h3>Task List</h3>
         </div>
         <div class="panel-body">
             <div class="list-group">
-                <a class="list-group-item" href="#" ng-click="editTask(task)" ng-repeat="task in tasks_global" >
-                    <h3 id="titleoverride" class="list-group-item-heading">{{task.name}}</h3>
-                    <p class="list-group-item-text">
-                    <h4>Channels</h4>
-                    <ul class="summary-list">
-                        <li ng-repeat="channel in task.channels">{{channel.channel}}</li>
-                    </ul>
-                    <h4>Models</h4>
-                    <ul class="summary-list">
-                        <li ng-repeat="model in task.models">{{model.name}}</li>
-                    </ul>
-                    </p>
-                </a>
+                <div class="list-group-item container-fluid" href="#"  ng-repeat="task in tasks_global" >
+                    <div class="col-md-6 col-xs-6">
+                        <h3 id="titleoverride" class="list-group-item-heading">{{task.name}}</h3>
+                        <div class="list-group-item-text">
+                            <h4>Channels</h4>
+                            <ul class="summary-list">
+                                <li ng-repeat="channel in task.channels">{{channel.channel}}</li>
+                            </ul>
+                            <h4>Models</h4>
+                            <ul class="summary-list">
+                                <li ng-repeat="model in task.models">{{model.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-6">
+                        <button class="btn btn-default" ng-click="editTask(task)">Edit</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="buttonDiv">
@@ -39,7 +44,7 @@
             <button class="btn btn-default" ng-click="saveTasks()" id="saveTaskButton">Save Tasks</button>
         </div>
     </div>
-    <div ng-if="edit_task" class="panel panel-default descDiv col-md-8">
+    <div ng-if="edit_task" class="panel panel-default content-div">
         <div class="panel-heading">
             <a href="#" editable-text="task.name" onbeforesave="markChanged(task)">
                 {{ task.name || 'Click to enter task name' }}

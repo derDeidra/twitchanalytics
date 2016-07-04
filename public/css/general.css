@@ -20,7 +20,7 @@ body {
     padding: 10px;
 }
 
-a.list-group-item, li.list-group-item {
+a.list-group-item, li.list-group-item, div.list-group-item{
     background-color: #444444;
     border-color: black;
     color: white;
@@ -31,7 +31,7 @@ a.list-group-item, li.list-group-item {
     color: white;
 }
 
-a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.list-group-item:focus
+a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.list-group-item:focus, div.list-group-item:hover, div.list-group-item:focus
 {
     color: white;
     background-color: #302f31;
@@ -55,25 +55,29 @@ a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.l
     color: white;
 }
 
-.liveDescDiv {
+.col-content-div {
     padding: 10px;
     border-radius: 5px;
     background: #1E1A19;
     color: white;
 }
 
-.descDiv {
+.content-div {
     width: 60%;
     margin-left: auto;
     margin-right: auto;
 }
 
-.descDiv input, .liveDescDiv input {
+.content-div input, .col-content-div input {
     color: black;
 }
 
-.descDiv select, .liveDescDiv select {
+.content-div select, .col-content-div select {
     color: black;
+}
+
+.content-div p {
+    color: white;
 }
 
 .buttonDiv {
@@ -103,11 +107,15 @@ a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.l
     width: 40%;
 }
 
-#goButtonDiv {
+.goButtonDiv {
     width: 20%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+}
+
+.goButtonDiv img {
+    width: 100%;
 }
 
 .chatBox {
@@ -142,3 +150,18 @@ a.list-group-item:hover, a.list-group-item:focus, li.list-group-item:hover, li.l
     padding-left: 15px;
     padding-top: 10px;
 }
+
+.jumbotron {
+    background-color: #1E1A19;
+    color: white;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.taskButton

@@ -21,7 +21,7 @@
     <% include navbar %>
     <div class="liveContainer">
         <div class="col-md-8">
-            <div class="panel panel-default liveDescDiv">
+            <div class="panel panel-default col-content-div">
                 <div class="panel-body">
                     <ul>
                         <li ng-repeat="element in feedback">{{element}}</li>
@@ -32,7 +32,7 @@
                     <button class="btn btn-default" ng-click="channelDisconnect()" ng-disabled="!channelActive">Leave Channel</button>
                 </div>
             </div>
-            <div class="panel panel-default liveDescDiv">
+            <div class="panel panel-default col-content-div">
                 <div class="panel-heading">
                     Twitch Model Parameters
                 </div>
@@ -46,7 +46,7 @@
                     <button class="btn btn-default" ng-click="resetValues()">Reset Values</button>
                 </div>
             </div>
-            <div class="panel panel-default liveDescDiv">
+            <div class="panel panel-default col-content-div">
                 <div class="panel-heading">
                     Meme Density Visualization
                 </div>
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="col-md-4 test">
-            <div class="panel panel-default liveDescDiv chatBox">
+            <div class="panel panel-default col-content-div chatBox">
                 <div class="panel-heading">
                     Chat
                 </div>
