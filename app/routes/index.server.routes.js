@@ -6,7 +6,7 @@ module.exports = function(app) {
     var live = require('../controllers/live.server.controller');
     var auth = require('../controllers/auth.server.controller');
     var tasks = require('../controllers/tasks.server.controller.js');
-    var visualizer = require('../controllers/visualizer.server.controller.js');
+    var query = require('../controllers/query.server.controller.js');
     var background = require('../background');
     background.init();
     console.log('[ROUTES] Starting save loop');
@@ -16,7 +16,7 @@ module.exports = function(app) {
     app.get('/', auth.accessRedirect, landing.render);
     app.get('/live', auth.accessControl, live.render);
     app.get('/tasks', auth.accessControl, tasks.render);
-    app.get('/visualizer', auth.accessControl, visualizer.render)
+    app.get('/query', auth.accessControl, query.render)
 
     //Auth
     app.get('/auth', auth.initialize);
@@ -26,7 +26,7 @@ module.exports = function(app) {
     //App GET endpoints
     app.get('/getTasks', auth.accessControl, background.getAllUserTasks);
     app.get('/getAllTasks', auth.adminAccessControl, background.getAllTasks);
-    app.get('/query', auth.accessControl, background.customQuery)
+    app.get('/execute-query', auth.accessControl, background.customQuery)
 
     //App POST endpoints
     app.post('/addTasks', auth.accessControl, background.addTasks);
