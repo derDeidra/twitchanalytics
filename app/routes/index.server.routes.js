@@ -1,5 +1,3 @@
-var backgroundID;
-
 module.exports = function(app) {
 
     var landing = require('../controllers/landing.server.controller');
@@ -7,10 +5,9 @@ module.exports = function(app) {
     var auth = require('../controllers/auth.server.controller');
     var tasks = require('../controllers/tasks.server.controller.js');
     var query = require('../controllers/query.server.controller.js');
-    var background = require('../background');
-    background.init();
-    console.log('[ROUTES] Starting save loop');
-    backgroundID = setInterval(background.save, 60000);
+    var handler = require('../task.handler');
+    var utils = require('../utils.js');
+    handler.init();
 
     //Pages
     app.get('/', auth.accessRedirect, landing.render);
@@ -24,12 +21,13 @@ module.exports = function(app) {
     app.get('/logout', auth.accessControl, auth.logout);
 
     //App GET endpoints
-    app.get('/getTasks', auth.accessControl, background.getAllUserTasks);
-    app.get('/getAllTasks', auth.adminAccessControl, background.getAllTasks);
-    app.get('/execute-query', auth.accessControl, background.customQuery)
+    app.get('/getTasks', auth.accessControl, handler.getAllUserTasks);
+    app.get('/getAllTasks', auth.adminAccessControl, handler.getAllTasks);
+    app.get('/execute-query', auth.accessControl, handler.customQuery)
+    app.get('/emotes', utils.getEmotes);
 
     //App POST endpoints
-    app.post('/addTasks', auth.accessControl, background.addTasks);
-    app.post('/updateTasks', auth.accessControl, background.updateTasks);
-    app.post('/removeTasks', auth.accessControl, background.removeTasks);
+    app.post('/addTasks', auth.accessControl, handler.addTasks);
+    app.post('/updateTasks', auth.accessControl, handler.updateTasks);
+    app.post('/removeTasks', auth.accessControl, handler.removeTasks);
 };

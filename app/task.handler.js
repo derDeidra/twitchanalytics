@@ -2,6 +2,7 @@ var irc = require('./controllers/irc.server.controller');
 var schema = require('./schema');
 var config = require('config');
 
+var backgroundID;
 var appAuthToken = config.get('app.auth_token');
 var appDisplayName = config.get('app.display_name');
 var saveRawData = config.get('saveRawData');
@@ -334,6 +335,9 @@ function initHelper() {
 exports.init = function () {
     irc.createIrcClient(appAuthToken, appDisplayName);
     irc.connectIrcClient(appAuthToken, initHelper);
+    console.log('[BACKGROUND] Starting save loop');
+    backgroundID = setInterval(this.save, 60000);
+
 };
 
 exports.save = function () {
