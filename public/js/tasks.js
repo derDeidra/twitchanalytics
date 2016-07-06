@@ -95,7 +95,7 @@ app.controller('tasks-body', function($scope, $http) {
     function addNewTasks(tasks){
         var req = {
             method: 'POST',
-            url: '/addTasks',
+            url: 'addTasks',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -107,7 +107,7 @@ app.controller('tasks-body', function($scope, $http) {
     function updateExistingTasks(tasks){
         var req = {
             method: 'POST',
-            url: '/updateTasks',
+            url: 'updateTasks',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -143,7 +143,7 @@ app.controller('tasks-body', function($scope, $http) {
     $scope.getTasks = function() {
         $http({
             method: 'GET',
-            url: '/getTasks'
+            url: 'getTasks'
         }).then(function successCallback(response) {
             console.log(response);
             populateData(response.data);

@@ -33,7 +33,7 @@ app.controller('query-body', function($scope, $http) {
         console.log($scope.query);
         $http({
             method: 'GET',
-            url: '/execute-query?q=' + encodeURIComponent(JSON.stringify($scope.query))
+            url: 'execute-query?q=' + encodeURIComponent(JSON.stringify($scope.query))
         }).then(function successCallback(response) {
             console.log(response);
         }, function errorCallback(response) {
