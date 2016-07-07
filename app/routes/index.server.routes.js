@@ -1,3 +1,10 @@
+function cacheControl (seconds) {
+    return function cacheMiddleware(req, res, next){
+        res.setHeader("Cache-Control", "public, max-age=#{seconds}")
+        next()
+    };
+}
+
 module.exports = function(app) {
 
     var landing = require('../controllers/landing.server.controller');
@@ -10,10 +17,10 @@ module.exports = function(app) {
     handler.init();
 
     //Pages
-    app.get('/', auth.accessRedirect, landing.render);
-    app.get('/live', auth.accessControl, live.render);
-    app.get('/tasks', auth.accessControl, tasks.render);
-    app.get('/query', auth.accessControl, query.render)
+    app.get('/', auth.accessRedirect, cacheControl(5 * 60), landing.render);
+    app.get('/live', auth.accessControl, cacheControl(5 * 60) ,live.render);
+    app.get('/tasks', auth.accessControl, cacheControl(5 * 60), tasks.render);
+    app.get('/query', auth.accessControl, cacheControl(5 * 60), query.render)
 
     //Auth
     app.get('/auth', auth.initialize);
