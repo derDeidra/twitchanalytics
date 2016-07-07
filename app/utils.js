@@ -1,7 +1,7 @@
 var http = require('http');
 var https = require('https');
 
-var emoteCache = null;
+var emoteCache = {};
 
 function _getJSON(options, onResult) {
     var prot = options.port == 443 ? https : http;
@@ -28,7 +28,7 @@ function _getJSON(options, onResult) {
 }
 
 function refreshCache(){
-    var options = {
+    var twichemotes = {
         host: 'twitchemotes.com',
         port: 443,
         path: '/api_cache/v2/global.json',
@@ -37,12 +37,36 @@ function refreshCache(){
             'Content-Type': 'application/json'
         }
     };
-    _getJSON(options, function(status, obj){
+    var betterttvemotes = {
+        host: 'api.betterttv.net',
+        port: 443,
+        path: '/emotes',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    _getJSON(twichemotes, function(status, obj){
         if(status == 200){
-            emoteCache = obj;
-            console.log('[UTILS] Emote cache refreshed');
+            var keys = Object.keys(obj.emotes);
+            for(var i = 0; i < keys.length; i++ ){
+                var key = keys[i];
+                emoteCache[key] = obj.template.small.replace('{image_id}',obj.emotes[key].image_id);
+            }
+            console.log('[UTILS] Twitch Emote cache refreshed');
         } else {
-            console.log('[UTILS] Error refreshing emote cache: ' + status);
+            console.log('[UTILS] Error refreshing twitch emote cache: ' + status);
+        }
+    });
+    _getJSON(betterttvemotes, function(status, obj){
+        if(status == 200){
+            for(var i = 0; i < obj.emotes.length; i++){
+                var curEmote = obj.emotes[i];
+                emoteCache[curEmote.regex] = curEmote.url;
+            }
+            console.log('[UTILS] BTTV Emote cache refreshed');
+        } else {
+            console.log('[UTILS] Error refreshing BTTV emote cache: ' + status);
         }
     });
 }

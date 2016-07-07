@@ -62,7 +62,9 @@
                 </div>
                 <div class="panel-body">
                     <ul class="list-group">
-                        <li ng-repeat="msg in chat" class="list-group-item">{{msg.from}} : {{msg.text}}</li>
+                        <div class="chatWrapper">
+                            <li ng-repeat="msg in chat" class="list-group-item">{{msg.from}} : <span ng-bind-html="msg.text"></span></li>
+                        </div>
                     </ul>
                 </div>
             </div>

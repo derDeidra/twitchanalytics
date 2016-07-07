@@ -1,7 +1,7 @@
 
-var app = angular.module('live', ['chart.js']);
+var app = angular.module('live', ['chart.js', 'ngSanitize']);
 
-app.controller('live-body', function($scope){
+app.controller('live-body', function($scope, $http, $sanitize){
     $scope.currentChannel;
     $scope.feedback = [];
 
@@ -12,6 +12,34 @@ app.controller('live-body', function($scope){
     $scope.labels_pie = [];
 
     $scope.chat = [];
+    $scope.emotes = {};
+
+    function getEmoteMappings(){
+        var req = {
+            method: 'GET',
+            url: 'emotes',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        $http(req).then(function(response){
+            console.log("Got emote mappings");
+            console.log(response);
+            $scope.emotes = response.data;
+        }, function(err){
+            console.log("Error getting emotes!");
+        });
+    }
+
+    function addEmoteLinksToMessage(msg){
+        var split = msg.text.split(' ');
+        for(var i = 0; i < split.length; i++){
+            if($scope.emotes[split[i]]){
+                split[i] = '<img src="' + $scope.emotes[split[i]] + '" title="' + split[i] + '">';
+            }
+        }
+        return {from : msg.from, text : $sanitize(split.join(' ')), message : msg.message};
+    }
 
     function handleDataConnection(data){
         for(var i = 0; i < $scope.labels_pie.length; i++){
@@ -19,8 +47,9 @@ app.controller('live-body', function($scope){
             var reg = new RegExp('.*' + val + '.*', 'g');
             $scope.data_pie[i] += (data.text.match(reg) || []).length;
         }
-        $scope.chat.push(data);
-        if(($scope.labels_pie.length > 0 && $scope.chat.length > 23) || ($scope.labels_pie.length == 0 && $scope.chat.length > 11))
+
+        $scope.chat.push(addEmoteLinksToMessage(data));
+        if(($scope.labels_pie.length > 0 && $scope.chat.length > 23) || ($scope.labels_pie.length == 0 && $scope.chat.length > 10))
             $scope.chat.shift();
         $scope.$apply();
     }
@@ -80,4 +109,7 @@ app.controller('live-body', function($scope){
         $scope.data_pie = [];
         $scope.labels_pie = [];
     };
+
+    getEmoteMappings();
+
 });

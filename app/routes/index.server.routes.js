@@ -24,7 +24,7 @@ module.exports = function(app) {
     app.get('/getTasks', auth.accessControl, handler.getAllUserTasks);
     app.get('/getAllTasks', auth.adminAccessControl, handler.getAllTasks);
     app.get('/execute-query', auth.accessControl, handler.customQuery)
-    app.get('/emotes', utils.getEmotes);
+    app.get('/emotes', auth.accessControl, utils.getEmotes);
 
     //App POST endpoints
     app.post('/addTasks', auth.accessControl, handler.addTasks);
